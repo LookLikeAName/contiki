@@ -142,10 +142,17 @@
 #define NETSTACK_CONF_ROUTING_NEIGHBOR_ADDED_CALLBACK orchestra_callback_child_added
 #define NETSTACK_CONF_ROUTING_NEIGHBOR_REMOVED_CALLBACK orchestra_callback_child_removed
 
+#undef ORCHESTRA_CONF_RULES
+#define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe, &default_common } /* Orchestra in non-storing */
+
 /* Dimensioning */
 #define ORCHESTRA_CONF_EBSF_PERIOD                     47
 #define ORCHESTRA_CONF_COMMON_SHARED_PERIOD            19 /* Common shared slot, 7 is a very short slotframe (high energy, high capacity). Must be prime and at least equal to number of nodes (incl. BR) */
-#define ORCHESTRA_CONF_UNICAST_PERIOD                  17 
+
+#define ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT           6
+#define ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE             3
+
+#define ORCHESTRA_CONF_UNICAST_PERIOD                   ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT*ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE
 #endif /* WITH_ORCHESTRA */
 
 
