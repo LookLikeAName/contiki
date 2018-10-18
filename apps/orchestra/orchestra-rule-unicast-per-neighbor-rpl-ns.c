@@ -94,6 +94,7 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
 static void
 init(uint16_t sf_handle)
 {
+  PRINTF("init rpl non-storing");
   int i;
   uint16_t rx_timeslot;
   slotframe_handle = sf_handle;
