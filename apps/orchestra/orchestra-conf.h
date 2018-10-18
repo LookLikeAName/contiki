@@ -48,9 +48,9 @@
  *  */
 //#define ORCHESTRA_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_storing, &default_common }
 /* Example configuration for RPL non-storing mode: */
- //#define ORCHESTRA_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns, &default_common } 
+ #define ORCHESTRA_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns, &default_common } 
 
-#define ORCHESTRA_RULES { &eb_per_time_source,&unicast_per_neighbor_rpl_ns_grouped_slotframe, &default_common }
+//#define ORCHESTRA_RULES { &eb_per_time_source,&unicast_per_neighbor_rpl_ns_grouped_slotframe, &default_common }
 #endif /* ORCHESTRA_CONF_RULES */
 
 /* Length of the various slotframes. Tune to balance network capacity,
