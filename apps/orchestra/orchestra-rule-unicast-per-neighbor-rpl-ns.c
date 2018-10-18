@@ -43,6 +43,14 @@
 #include "net/ipv6/uip-ds6-route.h"
 #include "net/packetbuf.h"
 
+#define DEBUG 1
+#if DEBUG
+#include <stdio.h>
+#define PRINTF(...) printf(__VA_ARGS__)
+#else
+#define PRINTF(...)
+#endif
+
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
 static struct tsch_slotframe *sf_unicast;
@@ -94,6 +102,7 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
 static void
 init(uint16_t sf_handle)
 {
+  PRINTF("init orchestra non-storing\n");
   int i;
   uint16_t rx_timeslot;
   slotframe_handle = sf_handle;

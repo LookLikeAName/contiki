@@ -47,6 +47,16 @@
 #include "net/rpl/rpl-conf.h"
 #include "net/rpl/rpl-private.h"
 
+
+
+#define DEBUG 1
+#if DEBUG
+#include <stdio.h>
+#define PRINTF(...) printf(__VA_ARGS__)
+#else
+#define PRINTF(...)
+#endif
+
 /*
  * The body of this rule should be compiled only when "nbr_routes" is available,
  * otherwise a link error causes build failure. "nbr_routes" is compiled if
@@ -155,6 +165,7 @@ remove_uc_link(const linkaddr_t *linkaddr)
 static void
 child_added(const linkaddr_t *linkaddr)
 {
+  PRINTF("orchestra storing add child\n");
   add_uc_link(linkaddr);
 }
 /*---------------------------------------------------------------------------*/
@@ -201,6 +212,7 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
 static void
 init(uint16_t sf_handle)
 {
+  PRINTF("init orchestra storing\n");
   slotframe_handle = sf_handle;
   channel_offset = sf_handle;
   /* Slotframe for unicast transmissions */
