@@ -65,6 +65,16 @@ typedef struct group_attribute_s group_attribute;
 group_attribute groups[ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT];
 
 /*---------------------------------------------------------------------------*/
+uint16_t
+get_group_offset(const linkaddr_t *addr)
+{
+  if(addr != NULL && ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT > 0) {
+    return ORCHESTRA_LINKADDR_HASH(addr) % ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT;
+  } else {
+    return 0xffff;
+  }
+}
+
 static uint16_t
 get_node_timeslot(const linkaddr_t *addr)
 {
@@ -75,16 +85,6 @@ get_node_timeslot(const linkaddr_t *addr)
       return 0xffff;
     }
     return group_offset*ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE+groups[group_offset].allocate_slot_offset;
-  } else {
-    return 0xffff;
-  }
-}
-
-uint16_t
-get_group_offset(const linkaddr_t *addr)
-{
-  if(addr != NULL && ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT > 0) {
-    return ORCHESTRA_LINKADDR_HASH(addr) % ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT;
   } else {
     return 0xffff;
   }
