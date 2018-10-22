@@ -83,7 +83,7 @@ static uint16_t
 get_group_offset(const linkaddr_t *addr)
 {
   if(addr != NULL && ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT > 0) {
-    return group_offset=(ORCHESTRA_LINKADDR_HASH(addr) % ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT);
+    return ORCHESTRA_LINKADDR_HASH(addr) % ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT;
   } else {
     return 0xffff;
   }
