@@ -55,12 +55,35 @@ static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
 static struct tsch_slotframe *sf_unicast;
 
+struct group_attribute_s{
+  uint8_t required_slot;
+  uint8_t allocate_slot_offset;
+}group_attribute_default={1,0};
+
+typedef strust group_attribute_s group_attribute;
+
+group_attribute groups[ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT];
+
 /*---------------------------------------------------------------------------*/
 static uint16_t
 get_node_timeslot(const linkaddr_t *addr)
 {
   if(addr != NULL && ORCHESTRA_UNICAST_PERIOD > 0) {
-    return (ORCHESTRA_LINKADDR_HASH(addr) % ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT)*ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE;
+    uint16_t group_offset=get_group_offset(addr);
+    if(group_offset==0xffff){
+      return 0xffff;
+    }
+    return group_offset*ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE+groups[group_offset].allocate_slot_offset;
+  } else {
+    return 0xffff;
+  }
+}
+
+static uint16_t
+get_group_offset(const linkaddr_t *addr)
+{
+  if(addr != NULL && ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT > 0) {
+    return group_offset=(ORCHESTRA_LINKADDR_HASH(addr) % ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT);
   } else {
     return 0xffff;
   }
@@ -88,6 +111,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
     }
     if(timeslot != NULL) {
       *timeslot = get_node_timeslot(dest);
+      groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
     return 1;
   }
@@ -107,6 +131,10 @@ init(uint16_t sf_handle)
   uint16_t rx_timeslot;
   slotframe_handle = sf_handle;
   channel_offset = sf_handle;
+  /*Initial groups attribute*/
+  for(i=0;i<ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT;i++){
+    groups[i]=group_attribute_default;
+  }
   /* Slotframe for unicast transmissions */
   sf_unicast = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_UNICAST_PERIOD);
   rx_timeslot = get_node_timeslot(&linkaddr_node_addr);
