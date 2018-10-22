@@ -56,8 +56,8 @@ static uint16_t channel_offset = 0;
 static struct tsch_slotframe *sf_unicast;
 
 struct group_attribute_s{
-  uint8_t required_slot;
-  uint8_t allocate_slot_offset;
+  uint16_t required_slot;
+  uint16_t allocate_slot_offset;
 }group_attribute_default={1,0};
 
 typedef struct group_attribute_s group_attribute;
@@ -69,7 +69,8 @@ static uint16_t
 get_node_timeslot(const linkaddr_t *addr)
 {
   if(addr != NULL && ORCHESTRA_UNICAST_PERIOD > 0) {
-    uint16_t group_offset=get_group_offset(addr);
+    uint16_t group_offset;
+    group_offset=get_group_offset(addr);
     if(group_offset==0xffff){
       return 0xffff;
     }
