@@ -79,7 +79,7 @@ get_node_timeslot(const linkaddr_t *addr)
   }
 }
 
-static uint16_t
+uint16_t
 get_group_offset(const linkaddr_t *addr)
 {
   if(addr != NULL && ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT > 0) {
