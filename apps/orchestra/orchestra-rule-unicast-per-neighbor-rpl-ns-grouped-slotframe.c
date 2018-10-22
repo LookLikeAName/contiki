@@ -60,7 +60,7 @@ struct group_attribute_s{
   uint8_t allocate_slot_offset;
 }group_attribute_default={1,0};
 
-typedef strust group_attribute_s group_attribute;
+typedef struct group_attribute_s group_attribute;
 
 group_attribute groups[ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT];
 
