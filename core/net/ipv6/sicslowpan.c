@@ -721,9 +721,13 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
   
   packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,(UIP_IP_BUF->tcflow & 0x0F));
   
-
-  PRINTF("UIP_IP_BUF->tcflow : %02x , ors : %02x \n",UIP_IP_BUF->tcflow,orchestra_request_slots);
-
+  if(orchestra_request_slots != 0 && orchestra_request_slots != NULL){
+    uint8_t ors;
+    ors = orchestra_request_slots;
+    UIP_IP_BUF->tcflow = (ors << 4) | UIP_IP_BUF->tcflow;
+  }
+  PRINTF("UIP_IP_BUF->tcflow : %02x \n",UIP_IP_BUF->tcflow);
+  
   tmp = (UIP_IP_BUF->vtc << 4) | (UIP_IP_BUF->tcflow >> 4);
   tmp = ((tmp & 0x03) << 6) | (tmp >> 2);
 
