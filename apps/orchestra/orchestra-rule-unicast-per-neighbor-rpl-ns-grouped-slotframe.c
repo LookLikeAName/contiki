@@ -114,9 +114,12 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *timeslot = get_group_offset(dest);
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
-    orchestra_request_slots_for_root = get_node_timeslot(&linkaddr_node_addr);
+    orchestra_request_slots_for_root = 3;
     PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
-    PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
+    if(orchestra_requested_slots_frome_child != NULL){
+      PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
+    }
+      
     
     return 1;
   }
