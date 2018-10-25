@@ -111,7 +111,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *slotframe = slotframe_handle;
     }
     if(timeslot != NULL) {
-      *timeslot = get_node_timeslot(dest);
+      *timeslot = get_group_offset(dest);
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
     orchestra_request_slots_for_root = get_node_timeslot(&linkaddr_node_addr);
