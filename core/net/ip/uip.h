@@ -2215,7 +2215,7 @@ uint16_t uip_icmp6chksum(void);
 
 /*This is a hack of orchestra improvement.(Maybe will be replace if we found a better way.)*/
 uint8_t orchestra_request_slots;
-orchestra_request_slots=0;
+
 
 #endif /* UIP_H_ */
 
