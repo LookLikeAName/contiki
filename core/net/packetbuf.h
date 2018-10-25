@@ -286,6 +286,8 @@ enum {
 
     /* Add traffic class attribute*/
     PACKETBUF_ATTR_TCFLOW,
+    /* Add orchestra request slots attribute*/
+    PACKETBUF_ATTR_ORCHESTRA_REQUEST_SLOTS,
 
   /* These must be last */
   PACKETBUF_ADDR_SENDER,

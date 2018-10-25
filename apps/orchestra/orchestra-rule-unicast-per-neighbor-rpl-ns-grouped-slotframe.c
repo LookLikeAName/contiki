@@ -114,6 +114,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *timeslot = get_node_timeslot(dest);
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
+    packetbuf_set_attr(PACKETBUF_ATTR_ORCHESTRA_REQUEST_SLOTS,3);
     return 1;
   }
   return 0;
@@ -145,6 +146,9 @@ init(uint16_t sf_handle)
         LINK_OPTION_SHARED | LINK_OPTION_TX | ( i == rx_timeslot ? LINK_OPTION_RX : 0 ),
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         i, channel_offset);
+        if(i == rx_timeslot){
+          i+=2;
+        }
   }
 }
 /*---------------------------------------------------------------------------*/
