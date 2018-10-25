@@ -1016,8 +1016,14 @@ uncompress_hdr_iphc(uint8_t *buf, uint16_t ip_len)
         SICSLOWPAN_IP_BUF(buf)->flow = 0;
       }
     }
-    orchestra_requested_slots_frome_child = SICSLOWPAN_IP_BUF(buf)->tcflow >> 4;
-    PRINTF("orchestra_requested_slots_frome_child: %02x \n",orchestra_requested_slots_frome_child);
+    
+    if(SICSLOWPAN_IP_BUF(buf)->tcflow != NULL){
+      uint8_t oreds = (uint8_t)SICSLOWPAN_IP_BUF(buf)->tcflow;
+      orchestra_requested_slots_frome_child = (oreds >> 4);
+      PRINTF("orchestra_requested_slots_frome_child: %02x \n",orchestra_requested_slots_frome_child);
+    }
+    
+    
   /* Next Header */
   if((iphc0 & SICSLOWPAN_IPHC_NH_C) == 0) {
     /* Next header is carried inline */
