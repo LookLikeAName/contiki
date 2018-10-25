@@ -114,7 +114,6 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *timeslot = get_node_timeslot(dest);
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
-    orchestra_request_slots_for_root = get_group_offset(&linkaddr_node_addr);
     PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
     PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);  
     return 1;
@@ -135,6 +134,8 @@ init(uint16_t sf_handle)
   uint16_t rx_timeslot;
   slotframe_handle = sf_handle;
   channel_offset = sf_handle;
+
+  orchestra_request_slots_for_root = get_group_offset(&linkaddr_node_addr);
   /*Initial groups attribute*/
   for(i=0;i<ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT;i++){
     groups[i]=group_attribute_default;
