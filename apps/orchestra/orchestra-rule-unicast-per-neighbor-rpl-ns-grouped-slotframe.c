@@ -116,10 +116,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
     }
     orchestra_request_slots_for_root = get_group_offset(&linkaddr_node_addr);
     PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
-    PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
-    }
-    
-    
+    PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);  
     return 1;
   }
   return 0;
