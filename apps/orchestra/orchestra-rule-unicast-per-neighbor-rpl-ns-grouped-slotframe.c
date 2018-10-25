@@ -116,10 +116,11 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
     }
     orchestra_request_slots_for_root = 3;
     PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
+    /*
     if(orchestra_requested_slots_frome_child != NULL){
       PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
     }
-      
+      */
     
     return 1;
   }
