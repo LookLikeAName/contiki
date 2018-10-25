@@ -111,16 +111,14 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *slotframe = slotframe_handle;
     }
     if(timeslot != NULL) {
-      *timeslot = get_group_offset(dest);
+      *timeslot = get_node_timeslot(dest);
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
-    orchestra_request_slots_for_root = 3;
+    orchestra_request_slots_for_root = get_group_offset(&linkaddr_node_addr);
     PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
-    /*
-    if(orchestra_requested_slots_frome_child != NULL){
-      PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
+    PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
     }
-      */
+    
     
     return 1;
   }
