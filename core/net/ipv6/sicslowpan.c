@@ -721,9 +721,9 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
   
   packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,(UIP_IP_BUF->tcflow & 0x0F));
   
-  if(orchestra_request_slots != 0 && orchestra_request_slots != NULL){
+  if(orchestra_request_slots_for_root != 0 && orchestra_request_slots_for_root != NULL){
     uint8_t ors;
-    ors = orchestra_request_slots;
+    ors = orchestra_request_slots_for_root;
     UIP_IP_BUF->tcflow = (ors << 4) | UIP_IP_BUF->tcflow;
   }
   PRINTF("UIP_IP_BUF->tcflow : %02x \n",UIP_IP_BUF->tcflow);
@@ -1016,7 +1016,8 @@ uncompress_hdr_iphc(uint8_t *buf, uint16_t ip_len)
         SICSLOWPAN_IP_BUF(buf)->flow = 0;
       }
     }
-
+    orchestra_requested_slots_frome_child = SICSLOWPAN_IP_BUF(buf)->tcflow >> 4;
+    PRINTF("orchestra_requested_slots_frome_child: %02x \n",orchestra_requested_slots_frome_child);
   /* Next Header */
   if((iphc0 & SICSLOWPAN_IPHC_NH_C) == 0) {
     /* Next header is carried inline */
