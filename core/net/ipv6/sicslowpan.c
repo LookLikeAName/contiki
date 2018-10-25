@@ -719,15 +719,16 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
 
   /* IPHC format of tc is ECN | DSCP , original is DSCP | ECN */
   
-  packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,(UIP_IP_BUF->tcflow & 0x0F));
+  packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,UIP_IP_BUF->tcflow);
   /*
+  packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,(UIP_IP_BUF->tcflow & 0x0F));
   if(orchestra_request_slots_for_root != 0 && orchestra_request_slots_for_root != NULL){
     uint8_t ors;
     ors = orchestra_request_slots_for_root;
     UIP_IP_BUF->tcflow = (ors << 4) | UIP_IP_BUF->tcflow;
-  }*/
+  }
   PRINTF("UIP_IP_BUF->tcflow : %02x \n",UIP_IP_BUF->tcflow);
-  
+  */
   tmp = (UIP_IP_BUF->vtc << 4) | (UIP_IP_BUF->tcflow >> 4);
   tmp = ((tmp & 0x03) << 6) | (tmp >> 2);
 
