@@ -115,6 +115,9 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
     packetbuf_set_attr(PACKETBUF_ATTR_ORCHESTRA_REQUEST_SLOTS,3);
+    uint8_t ors;
+    ors=(uint8_t)packetbuf_attr(PACKETBUF_ATTR_ORCHESTRA_REQUEST_SLOTS);
+    PRINTF("Rule ns grouped slotframe request slots: %02x \n",ors);
     return 1;
   }
   return 0;
