@@ -176,7 +176,7 @@ init(uint16_t sf_handle)
   /* Add a Tx link at each available timeslot. Make the link Rx at our own timeslot. */
   for(i = 0; i < ORCHESTRA_UNICAST_PERIOD; i++) {
     tsch_schedule_add_link(sf_unicast,
-        LINK_OPTION_SHARED | LINK_OPTION_TX |  (i >= rx_timeslot) && (i < rx_timeslot+ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE) ? LINK_OPTION_RX : 0 ),
+        LINK_OPTION_SHARED | LINK_OPTION_TX |  ((i >= rx_timeslot) && (i < rx_timeslot+ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE)) ? LINK_OPTION_RX : 0 ),
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         i, channel_offset);
         /*if(i == rx_timeslot){
