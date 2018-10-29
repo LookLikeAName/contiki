@@ -141,7 +141,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *slotframe = slotframe_handle;
     }
     if(timeslot != NULL) {
-      *timeslot = get_node_timeslot(dest);
+      *timeslot = get_node_timeslot(dest)+1;
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
     slot_allocate_routine(dest);
