@@ -141,7 +141,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *slotframe = slotframe_handle;
     }
     if(timeslot != NULL) {
-      *timeslot = get_node_timeslot(dest);
+      *timeslot = get_node_timeslot(dest)+1;
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
     slot_allocate_routine(dest);
@@ -176,11 +176,11 @@ init(uint16_t sf_handle)
   /* Add a Tx link at each available timeslot. Make the link Rx at our own timeslot. */
   for(i = 0; i < ORCHESTRA_UNICAST_PERIOD; i++) {
     tsch_schedule_add_link(sf_unicast,
-        LINK_OPTION_SHARED | LINK_OPTION_TX | ( i == rx_timeslot ? LINK_OPTION_RX : 0 ),
+        LINK_OPTION_SHARED | LINK_OPTION_TX | ( i >= rx_timeslot+(ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE-1) ? LINK_OPTION_RX : 0 ),
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         i, channel_offset);
         if(i == rx_timeslot){
-          i+=2;
+          i+=(ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE-1);
         }
   }
 }
