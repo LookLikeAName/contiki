@@ -140,16 +140,15 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }
+    /*DEBUG */
+    srand(time(NULL));
+    int rnd;
+    rnd=(rand()%3);
     if(timeslot != NULL) {
-      /*DEBUG */
-      srand(time(NULL));
-      int rnd;
-      rnd=(rand()%3);
-      
       *timeslot = get_node_timeslot(dest)+rnd;
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
-    PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x\n",*slotframe,*timeslot);
+    PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x, rnd: %d \n",*slotframe,*timeslot,rnd);
     slot_allocate_routine(dest);
    
     return 1;
