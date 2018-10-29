@@ -46,6 +46,13 @@
 #define DEBUG DEBUG_PRINT
 #include "net/ip/uip-debug.h"
 
+#if DEBUG
+#include <stdio.h>
+#define PRINTF(...) printf(__VA_ARGS__)
+#else
+#define PRINTF(...)
+#endif
+
 /* A net-layer sniffer for packets sent and received */
 static void orchestra_packet_received(void);
 static void orchestra_packet_sent(int mac_status);
@@ -123,6 +130,7 @@ orchestra_callback_packet_ready(void)
   }
 
 #if TSCH_WITH_LINK_SELECTOR
+  PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x\n",slotframe,timeslot);
   packetbuf_set_attr(PACKETBUF_ATTR_TSCH_SLOTFRAME, slotframe);
   packetbuf_set_attr(PACKETBUF_ATTR_TSCH_TIMESLOT, timeslot);
 #endif

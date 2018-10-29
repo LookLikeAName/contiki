@@ -91,6 +91,36 @@ get_node_timeslot(const linkaddr_t *addr)
 }
 /*---------------------------------------------------------------------------*/
 static void
+add_uc_rx_link(const linkaddr_t *linkaddr)
+{
+
+}
+/*---------------------------------------------------------------------------*/
+static void
+remove_uc_rx_link(const linkaddr_t *linkaddr)
+{
+
+}
+/*---------------------------------------------------------------------------*/
+static void
+slot_allocate_routine(const linkaddr_t *linkaddr)
+{
+  PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
+  uint16_t node_group_offset;
+  node_group_offset=get_group_offset(&linkaddr_node_addr);
+  if(orchestra_requested_slots_frome_child>=groups[node_group_offset].required_slot){
+
+  }
+  else
+  {
+
+  }
+  PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
+  
+}
+
+/*---------------------------------------------------------------------------*/
+static void
 child_added(const linkaddr_t *linkaddr)
 {
 }
@@ -114,8 +144,8 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *timeslot = get_node_timeslot(dest);
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
-    PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
-    PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);  
+    slot_allocate_routine(dest);
+   
     return 1;
   }
   return 0;
