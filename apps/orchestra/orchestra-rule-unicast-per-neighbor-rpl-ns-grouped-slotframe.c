@@ -140,15 +140,11 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }
-    /*DEBUG */
-    srand(time(NULL));
-    int rnd;
-    rnd=(rand()%3);
     if(timeslot != NULL) {
-      *timeslot = get_node_timeslot(dest)+rnd;
+      *timeslot = get_node_timeslot(dest);
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
-    PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x, rnd: %d \n",*slotframe,*timeslot,rnd);
+    PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x\n",*slotframe,*timeslot);
     slot_allocate_routine(dest);
    
     return 1;
@@ -169,8 +165,10 @@ init(uint16_t sf_handle)
   uint16_t rx_timeslot;
   slotframe_handle = sf_handle;
   channel_offset = sf_handle;
-
+  // Debug testing field
   orchestra_request_slots_for_root = get_group_offset(&linkaddr_node_addr);
+  groups[get_group_offset(&linkaddr_node_addr)].required_slot = 2;
+
   /*Initial groups attribute*/
   for(i=0;i<ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT;i++){
     groups[i]=group_attribute_default;
