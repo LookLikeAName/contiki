@@ -54,11 +54,12 @@
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
 static struct tsch_slotframe *sf_unicast;
+static uint16_t packet_countdown = 10;
 
 struct group_attribute_s{
   uint16_t required_slot;
   uint16_t allocate_slot_offset;
-}group_attribute_default={2,0};
+}group_attribute_default={1,0};
 
 typedef struct group_attribute_s group_attribute;
 
@@ -93,7 +94,10 @@ get_node_timeslot(const linkaddr_t *addr)
 static void
 add_uc_rx_link(const linkaddr_t *linkaddr)
 {
-
+  uint16_t node_group_offset;
+  node_group_offset=get_group_offset(&linkaddr_node_addr);
+  groups[node_group_offset].required_slot++;
+  PRINTF("add_uc_rx_link, %d",groups[node_group_offset].required_slot);
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -107,13 +111,19 @@ slot_allocate_routine(const linkaddr_t *linkaddr)
 {
   PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
   uint16_t node_group_offset;
+  int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
-  if(orchestra_requested_slots_frome_child>=groups[node_group_offset].required_slot){
-
-  }
-  else
-  {
-
+  if(orchestra_requested_slots_frome_child<ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_frome_child > 0){
+   if(orchestra_requested_slots_frome_child>=groups[node_group_offset].required_slot){
+      packet_countdown = 10;
+      for(i=groups[node_group_offset].required_slot;i<orchestra_requested_slots_frome_child;i++){
+        add_uc_rx_link(&linkaddr_node_addr);
+      }
+    }
+    else
+    {
+      packet_countdown--;
+    }
   }
   PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
   
@@ -182,7 +192,7 @@ init(uint16_t sf_handle)
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         i, channel_offset);
         /*if(i == rx_timeslot){
-          i+=2;
+          i+=(ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE-1);
         }*/
   }
 }
