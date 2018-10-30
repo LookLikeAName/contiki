@@ -58,7 +58,7 @@ static struct tsch_slotframe *sf_unicast;
 struct group_attribute_s{
   uint16_t required_slot;
   uint16_t allocate_slot_offset;
-}group_attribute_default={1,0};
+}group_attribute_default={2,0};
 
 typedef struct group_attribute_s group_attribute;
 
@@ -167,7 +167,6 @@ init(uint16_t sf_handle)
   channel_offset = sf_handle;
   // Debug testing field
   orchestra_request_slots_for_root = get_group_offset(&linkaddr_node_addr);
-  groups[get_group_offset(&linkaddr_node_addr)].required_slot = 2;
 
   /*Initial groups attribute*/
   for(i=0;i<ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT;i++){
