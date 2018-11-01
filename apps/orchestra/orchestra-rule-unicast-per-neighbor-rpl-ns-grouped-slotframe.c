@@ -59,7 +59,7 @@ static uint16_t packet_countdown = 10;
 struct group_attribute_s{
   uint16_t required_slot;
   uint16_t allocate_slot_offset;
-}group_attribute_default={2,0};
+}group_attribute_default={3,0};
 
 typedef struct group_attribute_s group_attribute;
 
