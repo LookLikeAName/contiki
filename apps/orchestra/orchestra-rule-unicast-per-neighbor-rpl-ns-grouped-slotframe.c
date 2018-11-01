@@ -97,13 +97,20 @@ add_uc_rx_link(const linkaddr_t *linkaddr)
   uint16_t node_group_offset;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
   groups[node_group_offset].required_slot++;
-  PRINTF("add_uc_rx_link, %d",groups[node_group_offset].required_slot);
+
+
+  PRINTF("add_uc_rx_link, %d \n",groups[node_group_offset].required_slot);
 }
 /*---------------------------------------------------------------------------*/
 static void
 remove_uc_rx_link(const linkaddr_t *linkaddr)
 {
+  uint16_t node_group_offset;
+  node_group_offset=get_group_offset(&linkaddr_node_addr);
+  groups[node_group_offset].required_slot--;
 
+  
+  PRINTF("remove_uc_rx_link, %d \n",groups[node_group_offset].required_slot);
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -123,6 +130,12 @@ slot_allocate_routine(const linkaddr_t *linkaddr)
     else
     {
       packet_countdown--;
+      if(packet_countdown == 0){
+        packet_countdown = 10;
+        for(i=groups[node_group_offset].required_slot;i>orchestra_requested_slots_frome_child;i++){
+          remove_uc_rx_link(&linkaddr_node_addr);
+        }
+      }
     }
   }
   PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
