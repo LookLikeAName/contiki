@@ -124,7 +124,7 @@ slot_allocate_routine(const linkaddr_t *linkaddr)
    if(orchestra_requested_slots_frome_child>=groups[node_group_offset].required_slot){
       packet_countdown = 10;
       for(i=groups[node_group_offset].required_slot;i<orchestra_requested_slots_frome_child;i++){
-        add_uc_rx_link(&linkaddr_node_addr);
+        //add_uc_rx_link(&linkaddr_node_addr);
       }
     }
     else
@@ -133,7 +133,7 @@ slot_allocate_routine(const linkaddr_t *linkaddr)
       if(packet_countdown == 0){
         packet_countdown = 10;
         for(i=groups[node_group_offset].required_slot;i>orchestra_requested_slots_frome_child;i++){
-          remove_uc_rx_link(&linkaddr_node_addr);
+         // remove_uc_rx_link(&linkaddr_node_addr);
         }
       }
     }
@@ -164,13 +164,14 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *slotframe = slotframe_handle;
     }
     if(timeslot != NULL) {
+      *timeslot = get_node_timeslot(dest);
       srand(time(NULL));
       int rnd;
-      rnd=(rand()%groups[get_group_offset(dest)].required_slot);
-      *timeslot = get_node_timeslot(dest)+rnd;
+      rnd=(rand()%groups[get_group_offset(dest)].allocate_slot_offset);
+      groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
     //PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x\n",*slotframe,*timeslot);
-   // slot_allocate_routine(dest);
+    slot_allocate_routine(dest);
    
     return 1;
   }
