@@ -136,11 +136,16 @@
 /* See apps/orchestra/README.md for more Orchestra configuration options */
 #define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 0 /* No 6TiSCH minimal schedule */
 #define TSCH_CONF_WITH_LINK_SELECTOR 1 /* Orchestra requires per-packet link selection */
+#define TSCH_CALLBACK_NOACK_CONF 1
 /* Orchestra callbacks */
 #define TSCH_CALLBACK_NEW_TIME_SOURCE orchestra_callback_new_time_source
 #define TSCH_CALLBACK_PACKET_READY orchestra_callback_packet_ready
 #define NETSTACK_CONF_ROUTING_NEIGHBOR_ADDED_CALLBACK orchestra_callback_child_added
 #define NETSTACK_CONF_ROUTING_NEIGHBOR_REMOVED_CALLBACK orchestra_callback_child_removed
+
+#if TSCH_CALLBACK_NOACK_CONF
+#define TSCH_CALLBACK_NOACK orchestra_callback_tsch_noack
+#endif
 
 #undef ORCHESTRA_CONF_RULES
 #define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe, &default_common } /* Orchestra in non-storing */

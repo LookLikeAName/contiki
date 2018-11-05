@@ -681,9 +681,8 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
                 mac_tx_status = MAC_TX_OK;
               } else {
                 mac_tx_status = MAC_TX_NOACK;
-                #ifdef TSCH_CALLBACK_PACKET_READY
-                  TSCH_CALLBACK_PACKET_READY();
-                  queuebuf_update_attr_from_packetbuf(current_packet->qb);
+                #if TSCH_CALLBACK_NOACK_CONF
+                   TSCH_CALLBACK_NOACK(current_packet->qb);
                 #endif
               }
             } else {

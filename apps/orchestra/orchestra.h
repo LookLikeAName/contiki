@@ -50,6 +50,9 @@ struct orchestra_rule {
   int  (* select_packet)(uint16_t *slotframe, uint16_t *timeslot);
   void (* child_added)(const linkaddr_t *addr);
   void (* child_removed)(const linkaddr_t *addr);
+  #if TSCH_CALLBACK_NOACK_CONF
+  int (* packet_noack)(uint16_t *slotframe, uint16_t *timeslot,struct queuebuf *buf);
+  #endif
 };
 
 struct orchestra_rule eb_per_time_source;
@@ -72,5 +75,9 @@ void orchestra_callback_new_time_source(const struct tsch_neighbor *old, const s
 void orchestra_callback_child_added(const linkaddr_t *addr);
 /* Set with #define NETSTACK_CONF_ROUTING_NEIGHBOR_REMOVED_CALLBACK orchestra_callback_child_removed */
 void orchestra_callback_child_removed(const linkaddr_t *addr);
+
+#if TSCH_CALLBACK_NOACK_CONF
+void orchestra_callback_tsch_noack(struct queuebuf *buf);
+#endif
 
 #endif /* __ORCHESTRA_H__ */

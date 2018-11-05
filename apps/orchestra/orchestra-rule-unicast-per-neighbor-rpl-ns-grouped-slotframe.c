@@ -149,6 +149,28 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   return 0;
 }
 /*---------------------------------------------------------------------------*/
+#if TSCH_CALLBACK_NOACK_CONF 
+static int
+packet_noack(uint16_t *slotframe, uint16_t *timeslot,struct queuebuf *buf)
+{
+  /* Select data packets we have a unicast link to */
+  const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
+  if(queuebuf_addr(buf,PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
+     && !linkaddr_cmp(dest, &linkaddr_null)) {
+    if(slotframe != NULL) {
+      *slotframe = slotframe_handle;
+    }
+    if(timeslot != NULL) {
+      *timeslot = get_node_timeslot(dest);
+      groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
+    }
+   
+    return 1;
+  }
+  return 0;
+}
+#endif
+/*---------------------------------------------------------------------------*/
 static void
 new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
 {
@@ -190,4 +212,5 @@ struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe = {
   select_packet,
   child_added,
   child_removed,
+  packet_noack,
 };
