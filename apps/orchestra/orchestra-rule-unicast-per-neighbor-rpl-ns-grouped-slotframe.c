@@ -123,18 +123,18 @@ slot_allocate_routine(const linkaddr_t *linkaddr)
   if(orchestra_requested_slots_frome_child<ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_frome_child > 0){
    if(orchestra_requested_slots_frome_child>=groups[node_group_offset].required_slot){
       packet_countdown = 10;
-      for(i=groups[node_group_offset].required_slot;i<orchestra_requested_slots_frome_child;i++){
-        //add_uc_rx_link(&linkaddr_node_addr);
-      }
+      /*for(i=groups[node_group_offset].required_slot;i<orchestra_requested_slots_frome_child;i++){
+        add_uc_rx_link(&linkaddr_node_addr);
+      }*/
     }
     else
     {
       packet_countdown--;
       if(packet_countdown == 0){
         packet_countdown = 10;
-        for(i=groups[node_group_offset].required_slot;i>orchestra_requested_slots_frome_child;i++){
+        /*for(i=groups[node_group_offset].required_slot;i>orchestra_requested_slots_frome_child;i++){
          // remove_uc_rx_link(&linkaddr_node_addr);
-        }
+        }*/
       }
     }
   }
