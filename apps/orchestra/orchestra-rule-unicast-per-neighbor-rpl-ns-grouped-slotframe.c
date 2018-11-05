@@ -43,7 +43,7 @@
 #include "net/ip/uip.h"
 #include "net/packetbuf.h"
 #include <stdio.h>
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 
 #define PRINTF(...) printf(__VA_ARGS__)
@@ -94,7 +94,7 @@ get_node_timeslot(const linkaddr_t *addr)
 static void
 slot_allocate_routine(const linkaddr_t *linkaddr)
 {
-  PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
+  //PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
   uint16_t node_group_offset;
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
@@ -112,7 +112,7 @@ slot_allocate_routine(const linkaddr_t *linkaddr)
       }
     }
   }
-  PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
+ // PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
   
 }
 
@@ -153,6 +153,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
 static int
 packet_noack(uint16_t *slotframe, uint16_t *timeslot,struct queuebuf *buf)
 {
+
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
   if(queuebuf_addr(buf,PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
@@ -164,7 +165,7 @@ packet_noack(uint16_t *slotframe, uint16_t *timeslot,struct queuebuf *buf)
       *timeslot = get_node_timeslot(dest);
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
-   
+    PRINTF("NOACK\n");
     return 1;
   }
   return 0;
