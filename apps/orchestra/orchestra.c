@@ -159,23 +159,21 @@ void
  orchestra_callback_tsch_noack(struct queuebuf *buf)
  {
   int i;
-  /* By default, use any slotframe, any timeslot */
-  uint16_t slotframe = 9;
-  uint16_t timeslot = 0xffff;
 
   /* Loop over all rules until finding one able to handle the packet */
   for(i = 0; i < NUM_RULES; i++) {
     if(all_rules[i]->packet_noack != NULL) {
       if(all_rules[i]->packet_noack(&slotframe, &timeslot,buf)) {
+        PRINTF("orchestra_callback_tsch_noack\n");
+        #if TSCH_WITH_LINK_SELECTOR
+         queuebuf_set_attr(buf,PACKETBUF_ATTR_TSCH_SLOTFRAME, slotframe);
+         queuebuf_set_attr(buf,PACKETBUF_ATTR_TSCH_TIMESLOT, timeslot);
+        #endif
         break;
       }
     }
   }
-  PRINTF("orchestra_callback_tsch_noack\n");
-#if TSCH_WITH_LINK_SELECTOR
- queuebuf_set_attr(buf,PACKETBUF_ATTR_TSCH_SLOTFRAME, slotframe);
- queuebuf_set_attr(buf,PACKETBUF_ATTR_TSCH_TIMESLOT, timeslot);
-#endif
+
  }
  #endif
 /*---------------------------------------------------------------------------*/
