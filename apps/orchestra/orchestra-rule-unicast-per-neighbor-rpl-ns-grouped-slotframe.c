@@ -156,7 +156,7 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
     PRINTF("orchestra NOACK\n");
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
-  if(((((uint8_t *)(queuebuf_dataptr(current_packet->qb)))[0]) & 7) == FRAME802154_DATAFRAME
+  if(((((uint8_t *)(queuebuf_dataptr(buf)))[0]) & 7) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null)) {
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
