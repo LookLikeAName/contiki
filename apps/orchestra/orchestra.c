@@ -159,6 +159,9 @@ void
  orchestra_callback_tsch_noack(struct queuebuf *buf)
  {
   int i;
+  /* By default, use any slotframe, any timeslot */
+  uint16_t slotframe;
+  uint16_t timeslot;
 
   /* Loop over all rules until finding one able to handle the packet */
   for(i = 0; i < NUM_RULES; i++) {
