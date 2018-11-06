@@ -153,7 +153,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
 static int
 packet_noack(uint16_t *slotframe, uint16_t *timeslot,struct queuebuf *buf)
 {
-
+    PRINTF("orchestra NOACK\n");
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
   if(queuebuf_addr(buf,PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
@@ -165,9 +165,10 @@ packet_noack(uint16_t *slotframe, uint16_t *timeslot,struct queuebuf *buf)
       *timeslot = get_node_timeslot(dest);
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
-    PRINTF("NOACK\n");
+    PRINTF("orchestra NOACK true\n");
     return 1;
   }
+  PRINTF("orchestra NOACK false\n");
   return 0;
 }
 #endif
