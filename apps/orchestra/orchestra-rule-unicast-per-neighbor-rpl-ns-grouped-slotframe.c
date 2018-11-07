@@ -162,8 +162,12 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
       *slotframe = slotframe_handle;
     }
     if(timeslot != NULL) {
+      srand(time(NULL));
+      int rnd;
+      rnd=(rand()%groups[get_group_offset(dest)].required_slot);
+      groups[get_group_offset(dest)].allocate_slot_offset=rnd;
       *timeslot = get_node_timeslot(dest);
-      groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
+      
     }
     PRINTF("orchestra NOACK true\n");
     return 1;
