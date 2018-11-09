@@ -125,7 +125,7 @@ static int
 is_time_source(const linkaddr_t *linkaddr)
 {
      if(linkaddr != NULL && !linkaddr_cmp(linkaddr, &linkaddr_null)) {
-      PRINTLLADDR(orchestra_parent_linkaddr);
+      PRINTLLADDR(&orchestra_parent_linkaddr);
       if(linkaddr_cmp(&orchestra_parent_linkaddr, linkaddr)) {
         return 1;
       }  
@@ -151,7 +151,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
  
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null)) {
-      PRINTLLADDR(dest);
+      PRINTLLADDR(&dest);
       PRINTF("is_time_source %d \n",is_time_source(dest));
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
