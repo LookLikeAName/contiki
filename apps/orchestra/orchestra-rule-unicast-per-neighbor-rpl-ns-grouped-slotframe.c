@@ -148,7 +148,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
  
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
-     && !linkaddr_cmp(dest, &linkaddr_null) && is_time_source(dest)) {
+     && !linkaddr_cmp(dest, &linkaddr_null)) {
       PRINTF("group slotframe \n");
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
@@ -179,7 +179,7 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
   if(((((uint8_t *)(queuebuf_dataptr(buf)))[0]) & 7) == FRAME802154_DATAFRAME
-     && !linkaddr_cmp(dest, &linkaddr_null)   ) {
+     && !linkaddr_cmp(dest, &linkaddr_null)) {
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }
