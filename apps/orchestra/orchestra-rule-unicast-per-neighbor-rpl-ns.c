@@ -66,18 +66,6 @@ get_node_timeslot(const linkaddr_t *addr)
   }
 }
 /*---------------------------------------------------------------------------*/
-static int
-is_time_source(const linkaddr_t *linkaddr)
-{
-     if(linkaddr != NULL && !linkaddr_cmp(linkaddr, &linkaddr_null)) {
-      PRINTF("parent compare %d\n",linkaddr_cmp(&orchestra_parent_linkaddr, &linkaddr_null));
-      if(linkaddr_cmp(&orchestra_parent_linkaddr, linkaddr)) {
-        return 1;
-      }  
-    }  
-  return 0;
-}
-/*---------------------------------------------------------------------------*/
 static void
 child_added(const linkaddr_t *linkaddr)
 {
@@ -109,15 +97,6 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
 static void
 new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
 {
-  if(new != old) {
-    const linkaddr_t *old_addr = old != NULL ? &old->addr : NULL;
-    const linkaddr_t *new_addr = new != NULL ? &new->addr : NULL;
-    if(new_addr != NULL) {
-      linkaddr_copy(&orchestra_parent_linkaddr, new_addr);
-    } else {
-      linkaddr_copy(&orchestra_parent_linkaddr, &linkaddr_null);
-    }
-  }
 }
 /*---------------------------------------------------------------------------*/
 static void
