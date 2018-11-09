@@ -146,7 +146,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
  
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
-     && !linkaddr_cmp(dest, &linkaddr_null)) {
+     && !linkaddr_cmp(dest, &linkaddr_null) && is_time_source(dest)) {
       PRINTF("is_time_source %d \n",is_time_source(dest));
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
