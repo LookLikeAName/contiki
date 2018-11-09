@@ -162,7 +162,7 @@ void
   /* By default, use any slotframe, any timeslot */
   uint16_t slotframe;
   uint16_t timeslot;
-  PRINTF("orchestra_callback_tsch_noack\n");
+  //PRINTF("orchestra_callback_tsch_noack\n");
   /* Loop over all rules until finding one able to handle the packet */
   for(i = 0; i < NUM_RULES; i++) {
     if(all_rules[i]->packet_noack != NULL) {

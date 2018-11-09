@@ -63,14 +63,14 @@ struct group_attribute_s{
 
 typedef struct group_attribute_s group_attribute;
 
-group_attribute groups[ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT];
+group_attribute groups[ORCHESTRA_SLOTFRAME_GROUP_AMOUNT];
 
 /*---------------------------------------------------------------------------*/
 uint16_t
 get_group_offset(const linkaddr_t *addr)
 {
-  if(addr != NULL && ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT > 0) {
-    return ORCHESTRA_LINKADDR_HASH(addr) % ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT;
+  if(addr != NULL && ORCHESTRA_SLOTFRAME_GROUP_AMOUNT > 0) {
+    return ORCHESTRA_LINKADDR_HASH(addr) % ORCHESTRA_SLOTFRAME_GROUP_AMOUNT;
   } else {
     return 0xffff;
   }
@@ -79,13 +79,13 @@ get_group_offset(const linkaddr_t *addr)
 static uint16_t
 get_node_timeslot(const linkaddr_t *addr)
 {
-  if(addr != NULL && ORCHESTRA_UNICAST_PERIOD > 0) {
+  if(addr != NULL && ORCHESTRA_GROUPED_UNICAST_PERIOD > 0) {
     uint16_t group_offset;
     group_offset=get_group_offset(addr);
     if(group_offset==0xffff){
       return 0xffff;
     }
-    return group_offset*ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE+groups[group_offset].allocate_slot_offset;
+    return group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[group_offset].allocate_slot_offset;
   } else {
     return 0xffff;
   }
@@ -98,7 +98,7 @@ slot_allocate_routine(const linkaddr_t *linkaddr)
   uint16_t node_group_offset;
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
-  if(orchestra_requested_slots_frome_child<ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_frome_child > 0){
+  if(orchestra_requested_slots_frome_child<ORCHESTRA_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_frome_child > 0){
    if(orchestra_requested_slots_frome_child>=groups[node_group_offset].required_slot){
       packet_countdown = 10;
       groups[node_group_offset].required_slot+=(orchestra_requested_slots_frome_child-groups[node_group_offset].required_slot);
@@ -115,7 +115,18 @@ slot_allocate_routine(const linkaddr_t *linkaddr)
  // PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
   
 }
-
+/*---------------------------------------------------------------------------*/
+static int
+is_time_source(const linkaddr_t *linkaddr)
+{
+     if(linkaddr != NULL && !linkaddr_cmp(linkaddr, &linkaddr_null)) {
+      if(linkaddr_cmp(&orchestra_parent_linkaddr, linkaddr)) {
+       
+        return 1;
+      }  
+    }  
+  return 0;
+}
 /*---------------------------------------------------------------------------*/
 static void
 child_added(const linkaddr_t *linkaddr)
@@ -132,6 +143,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
 {
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
+  PRINTF("is parent %d",is_time_source(dest));
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null)) {
     if(slotframe != NULL) {
@@ -165,10 +177,10 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
       *timeslot = get_node_timeslot(dest);
       groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
     }
-    PRINTF("orchestra NOACK true\n");
+    //PRINTF("orchestra NOACK true\n");
     return 1;
   }
-  PRINTF("orchestra NOACK false\n");
+  //PRINTF("orchestra NOACK false\n");
   return 0;
 }
 #endif
@@ -190,20 +202,20 @@ init(uint16_t sf_handle)
   orchestra_request_slots_for_root = get_group_offset(&linkaddr_node_addr);
 
   /*Initial groups attribute*/
-  for(i=0;i<ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT;i++){
+  for(i=0;i<ORCHESTRA_SLOTFRAME_GROUP_AMOUNT;i++){
     groups[i]=group_attribute_default;
   }
   /* Slotframe for unicast transmissions */
-  sf_unicast = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_UNICAST_PERIOD);
+  sf_unicast = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_GROUPED_UNICAST_PERIOD);
   rx_timeslot = get_node_timeslot(&linkaddr_node_addr);
   /* Add a Tx link at each available timeslot. Make the link Rx at our own timeslot. */
-  for(i = 0; i < ORCHESTRA_UNICAST_PERIOD; i++) {
+  for(i = 0; i < ORCHESTRA_GROUPED_UNICAST_PERIOD; i++) {
     tsch_schedule_add_link(sf_unicast,
-        LINK_OPTION_SHARED | LINK_OPTION_TX | (((i >= rx_timeslot) && (i < rx_timeslot+ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE)) ? LINK_OPTION_RX : 0 ),
+        LINK_OPTION_SHARED | LINK_OPTION_TX | (((i >= rx_timeslot) && (i < rx_timeslot+ORCHESTRA_SLOTFRAME_GROUP_SIZE)) ? LINK_OPTION_RX : 0 ),
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         i, channel_offset);
         /*if(i == rx_timeslot){
-          i+=(ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE-1);
+          i+=(ORCHESTRA_SLOTFRAME_GROUP_SIZE-1);
         }*/
   }
 }
