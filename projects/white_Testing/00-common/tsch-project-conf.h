@@ -148,7 +148,7 @@
 #endif
 
 #undef ORCHESTRA_CONF_RULES
-#define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe,&unicast_per_neighbor_rpl_ns, &default_common } /* Orchestra in non-storing */
+#define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe, &default_common } /* Orchestra in non-storing */
 
 /* Dimensioning */
 #define ORCHESTRA_CONF_EBSF_PERIOD                     47
