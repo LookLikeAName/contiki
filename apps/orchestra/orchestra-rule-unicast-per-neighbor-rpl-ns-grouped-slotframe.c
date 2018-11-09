@@ -121,7 +121,7 @@ static int
 is_time_source(const linkaddr_t *linkaddr)
 {
      if(linkaddr != NULL && !linkaddr_cmp(linkaddr, &linkaddr_null)) {
-      PRINTF("parent compare\n");
+      PRINTF("parent compare %d\n",linkaddr_cmp(&orchestra_parent_linkaddr, &linkaddr_null));
       if(linkaddr_cmp(&orchestra_parent_linkaddr, linkaddr)) {
         return 1;
       }  
