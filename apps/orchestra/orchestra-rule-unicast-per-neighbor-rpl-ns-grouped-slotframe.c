@@ -184,7 +184,7 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
       }
       else
       {
-        *timeslot = get_node_timeslot(dest)-groups[group_offset].allocate_slot_offset;
+        *timeslot = get_node_timeslot(dest)-groups[get_group_offset(dest)].allocate_slot_offset;
       }
     }
     //PRINTF("orchestra NOACK true\n");
