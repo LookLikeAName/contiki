@@ -149,7 +149,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
  
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null) && is_time_source(dest)) {
-     
+      PRINTF("group slotframe \n");
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }

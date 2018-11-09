@@ -83,6 +83,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null)) {
+      PRINTF("ns slotframe \n");
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }
