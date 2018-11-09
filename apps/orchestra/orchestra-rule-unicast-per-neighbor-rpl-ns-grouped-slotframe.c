@@ -43,13 +43,18 @@
 #include "net/ip/uip.h"
 #include "net/packetbuf.h"
 #include <stdio.h>
+
 #define DEBUG 1
 #if DEBUG
-
 #define PRINTF(...) printf(__VA_ARGS__)
+#define PRINT6ADDR(addr) PRINTF(" %02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x ", ((uint8_t *)addr)[0], ((uint8_t *)addr)[1], ((uint8_t *)addr)[2], ((uint8_t *)addr)[3], ((uint8_t *)addr)[4], ((uint8_t *)addr)[5], ((uint8_t *)addr)[6], ((uint8_t *)addr)[7], ((uint8_t *)addr)[8], ((uint8_t *)addr)[9], ((uint8_t *)addr)[10], ((uint8_t *)addr)[11], ((uint8_t *)addr)[12], ((uint8_t *)addr)[13], ((uint8_t *)addr)[14], ((uint8_t *)addr)[15])
+#define PRINTLLADDR(lladdr) PRINTF(" %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x ",lladdr.u8[0], lladdr.u8[1], lladdr.u8[2], lladdr.u8[3],lladdr.u8[4], lladdr.u8[5], lladdr.u8[6], lladdr.u8[7])
 #else
 #define PRINTF(...)
+#define PRINT6ADDR(addr)
+#define PRINTLLADDR(addr)
 #endif
+
 
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
