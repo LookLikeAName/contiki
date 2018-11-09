@@ -154,8 +154,14 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       *slotframe = slotframe_handle;
     }
     if(timeslot != NULL) {
-      *timeslot = get_node_timeslot(dest);
-      groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
+      if(is_time_source(dest)){
+        *timeslot = get_node_timeslot(dest);
+        groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
+      }
+      else
+      {
+        *timeslot = get_node_timeslot(dest)-groups[get_group_offset(dest)].allocate_slot_offset;
+      }
     }
     //PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x\n",*slotframe,*timeslot);
     slot_allocate_routine(dest);
