@@ -66,6 +66,20 @@ get_node_timeslot(const linkaddr_t *addr)
   }
 }
 /*---------------------------------------------------------------------------*/
+static int
+is_time_source(const linkaddr_t *linkaddr)
+{
+     if(linkaddr != NULL && !linkaddr_cmp(linkaddr, &linkaddr_null)) {
+      PRINTF("parent null %d\n",linkaddr_cmp(&orchestra_parent_linkaddr, &linkaddr_null));
+      if(linkaddr_cmp(&orchestra_parent_linkaddr, linkaddr)) {
+        PRINTF("is_time_source 1 \n");
+        return 1;
+      }  
+    }
+  PRINTF("is_time_source 0 \n");  
+  return 0;
+}
+/*---------------------------------------------------------------------------*/
 static void
 child_added(const linkaddr_t *linkaddr)
 {
@@ -82,7 +96,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
-     && !linkaddr_cmp(dest, &linkaddr_null)) {
+     && !linkaddr_cmp(dest, &linkaddr_null)&&!is_time_source(dest)) {
       PRINTF("ns slotframe \n");
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
@@ -98,6 +112,15 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
 static void
 new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
 {
+  if(new != old) {
+    const linkaddr_t *old_addr = old != NULL ? &old->addr : NULL;
+    const linkaddr_t *new_addr = new != NULL ? &new->addr : NULL;
+    if(new_addr != NULL) {
+      linkaddr_copy(&orchestra_parent_linkaddr, new_addr);
+    } else {
+      linkaddr_copy(&orchestra_parent_linkaddr, &linkaddr_null);
+    }
+  }
 }
 /*---------------------------------------------------------------------------*/
 static void
