@@ -184,6 +184,10 @@ static struct pt slot_operation_pt;
 static PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t));
 static PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t));
 
+
+uint16_t number_of_slots_excuted_for_parent=0;
+uint16_t number_of_slots_used_for_parent=0;
+
 /*---------------------------------------------------------------------------*/
 /* TSCH locking system. TSCH is locked during slot operations */
 
