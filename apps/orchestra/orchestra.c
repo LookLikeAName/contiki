@@ -184,7 +184,7 @@ void
  int
  orchestra_callback_is_slot_for_parent(const struct tsch_link *link)
  {
-   /* Notify all Orchestra rules that a child was removed */
+  PRINTF("orchestra_callback_is_slot_for_parent \n");
    int i;
    for(i = 0; i < NUM_RULES; i++) {
      if(all_rules[i]->is_slot_for_parent != NULL) {
