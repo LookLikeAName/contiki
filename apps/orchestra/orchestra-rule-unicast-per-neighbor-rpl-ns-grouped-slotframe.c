@@ -209,12 +209,12 @@ int is_slot_for_parent(const struct tsch_link *link){
   group_offset =get_group_offset(&orchestra_parent_linkaddr);
   parent_slot_offset_start = group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
   
-  if(link->handle == slotframe_handle){ 
+  if(link->slotframe_handle == slotframe_handle){ 
     
       if(parent_slot_offset_start <= link->timeslot &&
          link->timeslot <  parent_slot_offset_start+groups[group_offset].required_slot)
         {
-          PRINTF("link for parent :%d %d %d %d\n",link->handle,link->timeslot,parent_slot_offset_start,groups[group_offset].required_slot);
+          PRINTF("link for parent :%d %d %d %d\n",link->slotframe_handle,link->timeslot,parent_slot_offset_start,groups[group_offset].required_slot);
           return 1;
         }
   }
