@@ -150,6 +150,7 @@
 
 #if TSCH_CALLBACK_GROUPED_NESS_CONF
 #define TSCH_CALLBACK_IS_SLOT_FOR_PARENT orchestra_callback_is_slot_for_parent
+#define TSCH_CALLBACK_IS_PACKET_FOR_PARENT orchestra_callback_is_packet_for_parent
 #endif
 
 #undef ORCHESTRA_CONF_RULES

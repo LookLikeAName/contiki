@@ -55,6 +55,7 @@ struct orchestra_rule {
   #endif
   #if TSCH_CALLBACK_GROUPED_NESS_CONF
   int (* is_slot_for_parent)(const struct tsch_link *link);
+  int (* is_packet_for_parent)(struct queuebuf *buf);
   #endif
 };
 

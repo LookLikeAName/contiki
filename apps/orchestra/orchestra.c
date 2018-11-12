@@ -195,6 +195,22 @@ void
    }
    return 0;
  }
+
+ int
+ orchestra_callback_is_packet_for_parent(struct queuebuf *buf)
+ {
+  
+   int i;
+   for(i = 0; i < NUM_RULES; i++) {
+     if(all_rules[i]->is_packet_for_parent != NULL) {
+        if(all_rules[i]->is_packet_for_parent(buf)){
+          return 1;
+        }
+     }
+   }
+   return 0;
+ }
+ 
  #endif
 /*---------------------------------------------------------------------------*/
 void

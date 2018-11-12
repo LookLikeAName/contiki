@@ -214,12 +214,19 @@ int is_slot_for_parent(const struct tsch_link *link){
       if(parent_slot_offset_start <= link->timeslot &&
          link->timeslot <  parent_slot_offset_start+groups[group_offset].required_slot)
         {
-          PRINTF("link for parent :%d %d %d %d\n",link->slotframe_handle,link->timeslot,parent_slot_offset_start,groups[group_offset].required_slot);
+         // PRINTF("link for parent :%d %d %d %d\n",link->slotframe_handle,link->timeslot,parent_slot_offset_start,groups[group_offset].required_slot);
           return 1;
         }
   }
   return 0;
 }
+
+int is_packet_for_parent(struct queuebuf *buf){
+  PRINTF("is_packet_for_parent/n");
+  const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
+  return is_time_source(dest);
+}
+
 #endif
 /*---------------------------------------------------------------------------*/
 static void
@@ -274,4 +281,5 @@ struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe = {
   child_removed,
   packet_noack,
   is_slot_for_parent,
+  is_packet_for_parent,
 };

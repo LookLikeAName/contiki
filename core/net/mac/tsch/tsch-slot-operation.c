@@ -510,6 +510,7 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
     if(current_packet == NULL || current_packet->qb == NULL) {
       mac_tx_status = MAC_TX_ERR_FATAL;
     } else {
+ 
       /* packet payload */
       static void *packet;
 #if LLSEC802154_ENABLED
@@ -591,6 +592,12 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
           tsch_radio_off(TSCH_RADIO_CMD_OFF_WITHIN_TIMESLOT);
 
           if(mac_tx_status == RADIO_TX_OK) {
+            #if TSCH_CALLBACK_GROUPED_NESS_CONF
+            /*Is the link for parent & packet sent for parent*/
+            if(TSCH_CALLBACK_IS_SLOT_FOR_PARENT(current_link) && TSCH_CALLBACK_IS_PACKET_FOR_PARENT(current_packet->qb)){
+              number_of_slots_used_for_parent++;
+            }
+            #endif
             if(!is_broadcast) {
               uint8_t ackbuf[TSCH_PACKET_MAX_LEN];
               int ack_len;
