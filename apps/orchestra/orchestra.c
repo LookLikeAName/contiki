@@ -180,6 +180,23 @@ void
  }
  #endif
 /*---------------------------------------------------------------------------*/
+ #if TSCH_CALLBACK_GROUPED_NESS_CONF
+ int
+ orchestra_callback_is_slot_for_parent(const tsch_link *link)
+ {
+   /* Notify all Orchestra rules that a child was removed */
+   int i;
+   for(i = 0; i < NUM_RULES; i++) {
+     if(all_rules[i]->is_slot_for_parent != NULL) {
+        if(all_rules[i]->is_slot_for_parent(link)){
+          return 1;
+        }
+     }
+   }
+   return 0;
+ }
+ #endif
+/*---------------------------------------------------------------------------*/
 void
 orchestra_init(void)
 {

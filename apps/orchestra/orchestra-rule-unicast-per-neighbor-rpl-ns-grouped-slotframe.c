@@ -201,6 +201,26 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
 }
 #endif
 /*---------------------------------------------------------------------------*/
+#if TSCH_CALLBACK_GROUPED_NESS_CONF
+int is_slot_for_parent(const tsch_link *link){
+  uint16_t parent_slot_offset_start;
+  uint16_t group_offset;
+
+  group_offset =get_group_offset(&orchestra_parent_linkaddr);
+  parent_slot_offset_start = group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
+  
+  if(link->handle == slotframe_handle){
+      if(parent_slot_offset_start <= link->timeslot &&
+         link->timeslot >=  parent_slot_offset_start+groups[group_offset].required_slot)
+        {
+          PRINTF("link for parent :%d\n",link->timeslot);
+          return 1;
+        }
+  }
+  return 0;
+}
+#endif
+/*---------------------------------------------------------------------------*/
 static void
 new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
 {
@@ -252,4 +272,5 @@ struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe = {
   child_added,
   child_removed,
   packet_noack,
+  is_slot_for_parent,
 };

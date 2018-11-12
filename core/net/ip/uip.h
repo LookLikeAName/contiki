@@ -2213,9 +2213,6 @@ uint16_t uip_udpchksum(void);
 uint16_t uip_icmp6chksum(void);
 
 
-/*This is a hack of orchestra improvement.(Maybe will be replace if we found a better way.)*/
-uint8_t orchestra_request_slots_for_root;
-uint8_t orchestra_requested_slots_frome_child;
 
 
 #endif /* UIP_H_ */

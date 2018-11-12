@@ -720,14 +720,15 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
   /* IPHC format of tc is ECN | DSCP , original is DSCP | ECN */
   
   packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,(UIP_IP_BUF->tcflow & 0x0F));
-  
+  #if WITH_ORCHESTRA
+  /*Compress the orchestra_request_slots_for_root into tc flow's four significant bits*/
   if(orchestra_request_slots_for_root != 0 && orchestra_request_slots_for_root != NULL){
     uint8_t ors;
     ors = ((orchestra_request_slots_for_root-1) & 0x0F);
     UIP_IP_BUF->tcflow = (ors << 4) | UIP_IP_BUF->tcflow ;
     PRINTF("UIP_IP_BUF->tcflow : %02x , ors: %02x \n",UIP_IP_BUF->tcflow,ors);
   }
-  
+  #endif
   
   tmp = (UIP_IP_BUF->vtc << 4) | (UIP_IP_BUF->tcflow >> 4);
   tmp = ((tmp & 0x03) << 6) | (tmp >> 2);
@@ -1017,10 +1018,13 @@ uncompress_hdr_iphc(uint8_t *buf, uint16_t ip_len)
         SICSLOWPAN_IP_BUF(buf)->flow = 0;
       }
     }
+    #if WITH_ORCHESTRA
+    /*Decompress the tc flow and get the data of orchestra_requested_slots_frome_child*/
     orchestra_requested_slots_frome_child = ((SICSLOWPAN_IP_BUF(buf)->tcflow & 0xF0) >> 4)+1;
     SICSLOWPAN_IP_BUF(buf)->tcflow = (SICSLOWPAN_IP_BUF(buf)->tcflow & 0x0F);
     PRINTF("orchestra_requested_slots_frome_child: %02x \n",orchestra_requested_slots_frome_child);
-  /* Next Header */
+    #endif
+    /* Next Header */
   if((iphc0 & SICSLOWPAN_IPHC_NH_C) == 0) {
     /* Next header is carried inline */
     SICSLOWPAN_IP_BUF(buf)->proto = *hc06_ptr;

@@ -978,6 +978,12 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       /* Reset drift correction */
       drift_correction = 0;
       is_drift_correction_used = 0;
+      #if TSCH_CALLBACK_GROUPED_NESS_CONF
+      /*Is the link for parent*/
+      if(TSCH_CALLBACK_IS_SLOT_FOR_PARENT(current_link)){
+        number_of_slots_excuted_for_parent++;
+      }
+      #endif
       /* Get a packet ready to be sent */
       current_packet = get_packet_and_neighbor_for_link(current_link, &current_neighbor);
       /* There is no packet to send, and this link does not have Rx flag. Instead of doing

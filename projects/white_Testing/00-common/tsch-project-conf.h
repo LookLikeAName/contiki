@@ -137,6 +137,7 @@
 #define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 0 /* No 6TiSCH minimal schedule */
 #define TSCH_CONF_WITH_LINK_SELECTOR 1 /* Orchestra requires per-packet link selection */
 #define TSCH_CALLBACK_NOACK_CONF 1
+#define TSCH_CALLBACK_GROUPED_NESS_CONF 1
 /* Orchestra callbacks */
 #define TSCH_CALLBACK_NEW_TIME_SOURCE orchestra_callback_new_time_source
 #define TSCH_CALLBACK_PACKET_READY orchestra_callback_packet_ready
@@ -145,6 +146,10 @@
 
 #if TSCH_CALLBACK_NOACK_CONF
 #define TSCH_CALLBACK_NOACK orchestra_callback_tsch_noack
+#endif
+
+#if TSCH_CALLBACK_GROUPED_NESS_CONF
+#define TSCH_CALLBACK_IS_SLOT_FOR_PARENT orchestra_callback_is_slot_for_parent
 #endif
 
 #undef ORCHESTRA_CONF_RULES
@@ -158,6 +163,16 @@
 #define ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT           6
 #define ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE             3
 #define ORCHESTRA_CONF_GROUPED_UNICAST_PERIOD                   ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT*ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE
+
+
+
+/*Request slots amount for root 4 bits( 0 ~ 14 ),reserved 15 for not sendeing to parent.*/
+uint8_t orchestra_request_slots_for_root;
+uint8_t orchestra_requested_slots_frome_child;
+
+uint16_t number_of_slots_excuted_for_parent=0;
+unit16_t number_of_slots_used_for_parent=0;
+
 #endif /* WITH_ORCHESTRA */
 
 

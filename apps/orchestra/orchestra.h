@@ -53,6 +53,9 @@ struct orchestra_rule {
   #if TSCH_CALLBACK_NOACK_CONF
   int (* packet_noack)(uint16_t *slotframe, uint16_t *timeslot,struct queuebuf *buf);
   #endif
+  #if TSCH_CALLBACK_GROUPED_NESS_CONF
+  int (* is_slot_for_parent)(const tsch_link *link);
+  #endif
 };
 
 struct orchestra_rule eb_per_time_source;
@@ -79,5 +82,11 @@ void orchestra_callback_child_removed(const linkaddr_t *addr);
 #if TSCH_CALLBACK_NOACK_CONF
 void orchestra_callback_tsch_noack(struct queuebuf *buf);
 #endif
+
+#if TSCH_CALLBACK_GROUPED_NESS_CONF
+int orchestra_callback_is_slot_for_parent(const tsch_link *link);
+#endif
+
+
 
 #endif /* __ORCHESTRA_H__ */
