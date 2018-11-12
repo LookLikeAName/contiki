@@ -222,7 +222,7 @@ int is_slot_for_parent(const struct tsch_link *link){
 }
 
 int is_packet_for_parent(struct queuebuf *buf){
-  PRINTF("is_packet_for_parent/n");
+  PRINTF("is_packet_for_parent \n");
   const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
   return is_time_source(dest);
 }
