@@ -182,7 +182,7 @@ void
 /*---------------------------------------------------------------------------*/
  #if TSCH_CALLBACK_GROUPED_NESS_CONF
  int
- orchestra_callback_is_slot_for_parent(const tsch_link *link)
+ orchestra_callback_is_slot_for_parent(const struct tsch_link *link)
  {
    /* Notify all Orchestra rules that a child was removed */
    int i;
