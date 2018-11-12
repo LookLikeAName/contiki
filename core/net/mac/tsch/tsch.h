@@ -181,4 +181,9 @@ void tsch_set_coordinator(int enable);
 /* Set the pan as secured or not */
 void tsch_set_pan_secured(int enable);
 
+
+/********** Other  Variables*********/
+uint16_t number_of_slots_excuted_for_parent=0;
+unit16_t number_of_slots_used_for_parent=0;
+
 #endif /* __TSCH_H__ */
