@@ -202,7 +202,7 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
 #endif
 /*---------------------------------------------------------------------------*/
 #if TSCH_CALLBACK_GROUPED_NESS_CONF
-int is_slot_for_parent(const tsch_link *link){
+int is_slot_for_parent(const struct tsch_link *link){
   uint16_t parent_slot_offset_start;
   uint16_t group_offset;
 
