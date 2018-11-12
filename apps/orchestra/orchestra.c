@@ -188,7 +188,6 @@ void
    int i;
    for(i = 0; i < NUM_RULES; i++) {
      if(all_rules[i]->is_slot_for_parent != NULL) {
-      PRINTF("orchestra_callback_is_slot_for_parent \n");
         if(all_rules[i]->is_slot_for_parent(link)){
           return 1;
         }
