@@ -164,15 +164,6 @@
 #define ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE             3
 #define ORCHESTRA_CONF_GROUPED_UNICAST_PERIOD                   ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT*ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE
 
-
-
-/*Request slots amount for root 4 bits( 0 ~ 14 ),reserved 15 for not sendeing to parent.*/
-uint8_t orchestra_request_slots_for_root;
-uint8_t orchestra_requested_slots_frome_child;
-
-uint16_t number_of_slots_excuted_for_parent=0;
-unit16_t number_of_slots_used_for_parent=0;
-
 #endif /* WITH_ORCHESTRA */
 
 
