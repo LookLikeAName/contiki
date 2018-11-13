@@ -232,6 +232,39 @@ void
      }
    }
  }
+
+ uint8_t
+ orchestra_callback_get_request_slots_for_root()
+ {
+   int i;
+   for(i = 0; i < NUM_RULES; i++) {
+     if(all_rules[i]->get_request_slots_for_root != NULL) {
+        return all_rules[i]->get_request_slots_for_root();
+     }
+   }
+ }
+
+ void
+ orchestra_callback_set_requested_slots_frome_child(uint16_t requested_slots_frome_child)
+ {
+   int i;
+   for(i = 0; i < NUM_RULES; i++) {
+     if(all_rules[i]->set_requested_slots_frome_child != NULL) {
+        all_rules[i]->set_requested_slots_frome_child(requested_slots_frome_child);
+     }
+   }
+ }
+
+ void
+ orchestra_callback_slot_allocate_routine() 
+ {
+   int i;
+   for(i = 0; i < NUM_RULES; i++) {
+     if(all_rules[i]->slot_allocate_routine != NULL) {
+        all_rules[i]->slot_allocate_routine();
+     }
+   }
+ }
  #endif
 /*---------------------------------------------------------------------------*/
 void

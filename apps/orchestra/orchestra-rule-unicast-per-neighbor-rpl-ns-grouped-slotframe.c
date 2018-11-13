@@ -57,8 +57,9 @@ static uint16_t channel_offset = 0;
 static struct tsch_slotframe *sf_unicast;
 static uint16_t packet_countdown = 10;
 
-extern uint8_t orchestra_request_slots_for_root;
-extern uint8_t orchestra_requested_slots_frome_child;
+/*Request slots amount for root 4 bits( 1 ~ 15 ) which actually mean 2~16 slots to allocate,reserved 0 for not sendeing to parent.*/
+uint8_t orchestra_request_slots_for_root=0;
+uint8_t orchestra_requested_slots_from_child=0;
 
 struct group_attribute_s{
   uint16_t required_slot;
@@ -95,30 +96,7 @@ get_node_timeslot(const linkaddr_t *addr)
   }
 }
 /*---------------------------------------------------------------------------*/
-static void
-slot_allocate_routine(const linkaddr_t *linkaddr)
-{
-  //PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_frome_child);
-  uint16_t node_group_offset;
-  int i;
-  node_group_offset=get_group_offset(&linkaddr_node_addr);
-  if(orchestra_requested_slots_frome_child<ORCHESTRA_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_frome_child > 0){
-   if(orchestra_requested_slots_frome_child>=groups[node_group_offset].required_slot){
-      packet_countdown = 10;
-      groups[node_group_offset].required_slot+=(orchestra_requested_slots_frome_child-groups[node_group_offset].required_slot);
-    }
-    else
-    {
-      packet_countdown--;
-      if(packet_countdown == 0){
-        packet_countdown = 10;
-        groups[node_group_offset].required_slot-=(groups[node_group_offset].required_slot-orchestra_requested_slots_frome_child);
-      }
-    }
-  }
- // PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
-  
-}
+
 /*---------------------------------------------------------------------------*/
 static int
 is_time_source(const linkaddr_t *linkaddr)
@@ -149,7 +127,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
 {
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
-  slot_allocate_routine(dest);
+  
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null)) {
       PRINTF("group slotframe \n");
@@ -256,6 +234,50 @@ void slot_request_acked(){
     PRINTF("slot_request_acked %d\n", groups[parent_group_offset].required_slot);
   }
 }
+
+uint8_t
+get_request_slots_for_root()
+{
+  /* Select data packets we have a unicast link to */
+  const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
+  
+  if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
+     && !linkaddr_cmp(dest, &linkaddr_null)&&is_time_source(dest)&&(orchestra_request_slots_for_root-1)>0) {
+    return orchestra_request_slots_for_root-1;
+  }
+  return 0;
+}
+
+void
+set_requested_slots_frome_child(uint8_t requested_slots_frome_child)
+{
+  orchestra_requested_slots_from_child = requested_slots_frome_child+1;
+}
+
+void
+slot_allocate_routine()
+{
+ //PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_from_child);
+  uint16_t node_group_offset;
+  int i;
+  node_group_offset=get_group_offset(&linkaddr_node_addr);
+  if(orchestra_requested_slots_from_child<ORCHESTRA_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_from_child > 0){
+   if(orchestra_requested_slots_from_child>=groups[node_group_offset].required_slot){
+      packet_countdown = 10;
+      groups[node_group_offset].required_slot+=(orchestra_requested_slots_from_child-groups[node_group_offset].required_slot);
+    }
+    else
+    {
+      packet_countdown--;
+      if(packet_countdown == 0){
+        packet_countdown = 10;
+        groups[node_group_offset].required_slot-=(groups[node_group_offset].required_slot-orchestra_requested_slots_from_child);
+      }
+    }
+  }
+ // PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
+  
+}
 #endif
 /*---------------------------------------------------------------------------*/
 static void
@@ -314,4 +336,9 @@ struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe = {
   packet_noack,
   is_slot_for_parent,
   is_packet_for_parent,
+  request_slot_routine,
+  slot_request_acked,
+  get_request_slots_for_root,
+  set_requested_slots_frome_child,
+  slot_allocate_routine,
 };

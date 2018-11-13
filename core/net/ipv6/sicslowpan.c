@@ -213,9 +213,6 @@ static int last_tx_status;
 
 static int last_rssi;
 
-
-extern uint8_t orchestra_request_slots_for_root;
-extern uint8_t orchestra_requested_slots_frome_child;
 /* ----------------------------------------------------------------- */
 /* Support for reassembling multiple packets                         */
 /* ----------------------------------------------------------------- */
@@ -727,7 +724,7 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
   /*Compress the orchestra_request_slots_for_root into tc flow's four significant bits*/
   if(orchestra_request_slots_for_root != 0 && orchestra_request_slots_for_root != NULL){
     uint8_t ors;
-    ors = ((orchestra_request_slots_for_root-1) & 0x0F);
+    ors = (TSCH_CALLBACK_GET_REQUEST_SLOTS_FOR_ROOT() & 0x0F);
     UIP_IP_BUF->tcflow = (ors << 4) | UIP_IP_BUF->tcflow ;
     PRINTF("UIP_IP_BUF->tcflow : %02x , ors: %02x \n",UIP_IP_BUF->tcflow,ors);
   }
@@ -1022,13 +1019,11 @@ uncompress_hdr_iphc(uint8_t *buf, uint16_t ip_len)
       }
     }
     #if WITH_ORCHESTRA
-    /*Decompress the tc flow and get the data of orchestra_requested_slots_frome_child*/
-    orchestra_requested_slots_frome_child = ((SICSLOWPAN_IP_BUF(buf)->tcflow & 0xF0) >> 4);
-    if(orchestra_requested_slots_frome_child!=0){
-      orchestra_requested_slots_frome_child++;
-    }
+    /*Decompress the tc flow and get the data of orchestra_requested_slots_from_child*/
+    TSCH_CALLBACK_SET_REQUEST_SLOTS_FROM_CHILD((SICSLOWPAN_IP_BUF(buf)->tcflow & 0xF0) >> 4);
+    TSCH_CALLBACK_SLOT_ALLOCATE_ROUTINE();
     SICSLOWPAN_IP_BUF(buf)->tcflow = (SICSLOWPAN_IP_BUF(buf)->tcflow & 0x0F);
-    PRINTF("orchestra_requested_slots_frome_child: %02x \n",orchestra_requested_slots_frome_child);
+ 
     #endif
     /* Next Header */
   if((iphc0 & SICSLOWPAN_IPHC_NH_C) == 0) {
