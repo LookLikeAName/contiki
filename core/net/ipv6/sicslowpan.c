@@ -72,7 +72,7 @@
 
 #include <stdio.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #include "net/ip/uip-debug.h"
 #if DEBUG
 /* PRINTFI and PRINTFO are defined for input and output to debug one without changing the timing of the other */
@@ -722,9 +722,8 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
   packetbuf_set_attr(PACKETBUF_ATTR_TCFLOW,(UIP_IP_BUF->tcflow & 0x0F));
   #if WITH_ORCHESTRA
   /*Compress the orchestra_request_slots_for_root into tc flow's four significant bits*/
-    uint8_t ors = TSCH_CALLBACK_GET_REQUEST_SLOTS_FOR_ROOT(link_destaddr);
-    PRINTF("ors: %02x \n",ors);
-    ors &=  0x0F;
+    uint8_t ors;
+    ors = (TSCH_CALLBACK_GET_REQUEST_SLOTS_FOR_ROOT(link_destaddr) & 0x0F);
     UIP_IP_BUF->tcflow = (ors << 4) | UIP_IP_BUF->tcflow ;
     PRINTF("UIP_IP_BUF->tcflow : %02x , ors: %02x \n",UIP_IP_BUF->tcflow,ors);
   #endif
