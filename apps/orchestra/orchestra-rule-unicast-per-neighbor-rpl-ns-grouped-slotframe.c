@@ -222,7 +222,7 @@ void request_slot_routine(uint16_t used_slot){
   {
     orchestra_request_slots_for_root = 0;
   }
-  PRINTF("request_slot_routine %d\n",orchestra_request_slots_for_root);
+  //PRINTF("request_slot_routine %d\n",orchestra_request_slots_for_root);
 }
 
 void slot_request_acked(){
@@ -275,7 +275,7 @@ slot_allocate_routine()
       }
     }
   }
- // PRINTF("Rule ns grouped slotframe request slots: %02x \n",orchestra_request_slots_for_root);
+  PRINTF("groups[node_group_offset].required_slot: %02x \n",groups[node_group_offset].required_slot);
   
 }
 #endif
