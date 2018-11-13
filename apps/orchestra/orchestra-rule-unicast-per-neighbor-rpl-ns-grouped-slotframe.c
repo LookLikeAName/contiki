@@ -222,7 +222,7 @@ void request_slot_routine(uint16_t used_slot){
   {
     orchestra_request_slots_for_root = 0;
   }
-  //PRINTF("request_slot_routine %d\n",orchestra_request_slots_for_root);
+  PRINTF("request_slot_routine %d\n",orchestra_request_slots_for_root);
 }
 
 void slot_request_acked(){
