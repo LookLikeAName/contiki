@@ -237,6 +237,7 @@ void slot_request_acked(){
     parent_group_offset = get_group_offset(&orchestra_parent_linkaddr);
     groups[parent_group_offset].required_slot = orchestra_request_slots_for_root;
     PRINTF("slot_request_acked %d\n", groups[parent_group_offset].required_slot);
+    orchestra_request_slots_for_root=0;
   }
 }
 
