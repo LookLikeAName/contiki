@@ -1020,7 +1020,10 @@ uncompress_hdr_iphc(uint8_t *buf, uint16_t ip_len)
     }
     #if WITH_ORCHESTRA
     /*Decompress the tc flow and get the data of orchestra_requested_slots_frome_child*/
-    orchestra_requested_slots_frome_child = ((SICSLOWPAN_IP_BUF(buf)->tcflow & 0xF0) >> 4)+1;
+    orchestra_requested_slots_frome_child = ((SICSLOWPAN_IP_BUF(buf)->tcflow & 0xF0) >> 4);
+    if(orchestra_requested_slots_frome_child!=0){
+      orchestra_requested_slots_frome_child++;
+    }
     SICSLOWPAN_IP_BUF(buf)->tcflow = (SICSLOWPAN_IP_BUF(buf)->tcflow & 0x0F);
     PRINTF("orchestra_requested_slots_frome_child: %02x \n",orchestra_requested_slots_frome_child);
     #endif

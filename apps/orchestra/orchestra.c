@@ -211,6 +211,29 @@ void
    return 0;
  }
  
+ void
+ orchestra_callback_request_slot_routine(uint16_t used_slot)
+ {
+   int i;
+   for(i = 0; i < NUM_RULES; i++) {
+     if(all_rules[i]->request_slot_routine != NULL) {
+        if(all_rules[i]->request_slot_routine(used_slot)){
+        }
+     }
+   }
+ }
+
+ void
+ orchestra_callback_slot_request_acked()
+ {
+   int i;
+   for(i = 0; i < NUM_RULES; i++) {
+     if(all_rules[i]->slot_request_acked != NULL) {
+        if(all_rules[i]->slot_request_acked()){
+        }
+     }
+   }
+ }
  #endif
 /*---------------------------------------------------------------------------*/
 void

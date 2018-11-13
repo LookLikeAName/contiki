@@ -151,6 +151,8 @@
 #if TSCH_CALLBACK_GROUPED_NESS_CONF
 #define TSCH_CALLBACK_IS_SLOT_FOR_PARENT orchestra_callback_is_slot_for_parent
 #define TSCH_CALLBACK_IS_PACKET_FOR_PARENT orchestra_callback_is_packet_for_parent
+#define TSCH_CALLBACK_REQUEST_SLOT_ROUTINE orchestra_callback_request_slot_routine
+#define TSCH_CALLBACK_SLOT_REQUEST_ACKED orchestra_callback_slot_request_acked
 #endif
 
 #undef ORCHESTRA_CONF_RULES
@@ -164,6 +166,10 @@
 #define ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT           6
 #define ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE             3
 #define ORCHESTRA_CONF_GROUPED_UNICAST_PERIOD                   ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT*ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE
+
+#define SLOTS_WINDOW_SIZE 50
+#define ADD_THRESHOLD SLOTS_WINDOW_SIZE*0.5
+#define DELETE_THRESHOLD SLOTS_WINDOW_SIZE*0.1
 
 #endif /* WITH_ORCHESTRA */
 

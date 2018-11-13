@@ -56,6 +56,8 @@ struct orchestra_rule {
   #if TSCH_CALLBACK_GROUPED_NESS_CONF
   int (* is_slot_for_parent)(const struct tsch_link *link);
   int (* is_packet_for_parent)(struct queuebuf *buf);
+  void (*request_slot_routine)(uint16_t used_slot);
+  void (*slot_request_acked)();
   #endif
 };
 
@@ -86,6 +88,9 @@ void orchestra_callback_tsch_noack(struct queuebuf *buf);
 
 #if TSCH_CALLBACK_GROUPED_NESS_CONF
 int orchestra_callback_is_slot_for_parent(const struct tsch_link *link);
+int orchestra_callback_is_packet_for_parent(struct queuebuf *buf);
+void orchestra_callback_request_slot_routine(uint16_t used_slot);
+void orchestra_callback_slot_request_acked();
 #endif
 
 

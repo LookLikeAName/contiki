@@ -146,7 +146,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
 {
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
- 
+  slot_allocate_routine(dest);
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null)) {
       PRINTF("group slotframe \n");
@@ -164,7 +164,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
       }
     }
     //PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x\n",*slotframe,*timeslot);
-    slot_allocate_routine(dest);
+    
    
     return 1;
   }
@@ -206,13 +206,13 @@ int is_slot_for_parent(const struct tsch_link *link){
   uint16_t parent_slot_offset_start;
   uint16_t group_offset;
 
-  group_offset =get_group_offset(&orchestra_parent_linkaddr);
+  parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
   parent_slot_offset_start = group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
   
-  if(link->slotframe_handle == slotframe_handle && group_offset != 0){ 
+  if(link->slotframe_handle == slotframe_handle && parent_group_offset != 0){ 
     
       if(parent_slot_offset_start <= link->timeslot &&
-         link->timeslot <  parent_slot_offset_start+groups[group_offset].required_slot)
+         link->timeslot <  parent_slot_offset_start+groups[parent_group_offset].required_slot)
         {
          // PRINTF("link for parent :%d %d %d %d\n",link->slotframe_handle,link->timeslot,parent_slot_offset_start,groups[group_offset].required_slot);
           return 1;
@@ -227,6 +227,28 @@ int is_packet_for_parent(struct queuebuf *buf){
   return is_time_source(dest);
 }
 
+void request_slot_routine(uint16_t used_slot){
+  parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
+  if(used_slot>ADD_THRESHOLD)
+  {
+    orchestra_request_slots_for_root = groups[parent_group_offset].required_slot+1 > ORCHESTRA_SLOTFRAME_GROUP_SIZE ? 0 : groups[parent_group_offset].required_slot+1;
+  }else if(used_slot<DELETE_THRESHOLD)
+  {
+    orchestra_request_slots_for_root = groups[parent_group_offset].required_slot-1 < 1 ? 0 : groups[parent_group_offset].required_slot-1;
+  }
+  else
+  {
+    orchestra_request_slots_for_root = 0;
+  }
+}
+
+void slot_request_acked(){
+  if(orchestra_request_slots_for_root!=0){
+    parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
+    groups[parent_group_offset].required_slot = orchestra_request_slots_for_root;
+    orchestra_request_slots_for_root = 0;
+  }
+}
 #endif
 /*---------------------------------------------------------------------------*/
 static void
@@ -235,6 +257,9 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
   if(new != old) {
     const linkaddr_t *old_addr = old != NULL ? &old->addr : NULL;
     const linkaddr_t *new_addr = new != NULL ? &new->addr : NULL;
+    if(old_addr!= NULL){
+      groups[get_group_offset(old_addr)]=group_attribute_default;
+    }
     if(new_addr != NULL) {
       linkaddr_copy(&orchestra_parent_linkaddr, new_addr);
     } else {

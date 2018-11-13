@@ -478,6 +478,18 @@ tsch_radio_off(enum tsch_radio_state_off_cmd command)
   }
 }
 /*---------------------------------------------------------------------------*/
+#if TSCH_CALLBACK_GROUPED_NESS_CONF
+/* To check if the node need to request more or less slots frome parent */
+void 
+tsch_slot_allocate_routine(){
+  if(number_of_slots_excuted_for_parent>=SLOTS_WINDOW_SIZE){
+        TSCH_CALLBACK_REQUEST_SLOT_ROUTINE(number_of_slots_used_for_parent);
+        number_of_slots_excuted_for_parent=0;
+        number_of_slots_used_for_parent=0;
+  }
+}
+#endif
+/*---------------------------------------------------------------------------*/
 static
 PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
 {
@@ -689,6 +701,7 @@ PT_THREAD(tsch_tx_slot(struct pt *pt, struct rtimer *t))
                   last_sync_asn = tsch_current_asn;
                   tsch_schedule_keepalive();
                 }
+                TSCH_CALLBACK_SLOT_REQUEST_ACKED();
                 mac_tx_status = MAC_TX_OK;
               } else {
                 mac_tx_status = MAC_TX_NOACK;
@@ -1078,7 +1091,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         current_slot_start += tsch_timesync_adaptive_compensate(time_to_next_active_slot);
       } while(!tsch_schedule_slot_operation(t, prev_slot_start, time_to_next_active_slot, "main"));
     }
-
+    tsch_slot_allocate_routine();
     tsch_in_slot_operation = 0;
     PT_YIELD(&slot_operation_pt);
   }

@@ -2213,9 +2213,9 @@ uint16_t uip_udpchksum(void);
 uint16_t uip_icmp6chksum(void);
 
 
-/*Request slots amount for root 4 bits( 0 ~ 14 ),reserved 15 for not sendeing to parent.*/
-uint8_t orchestra_request_slots_for_root;
-uint8_t orchestra_requested_slots_frome_child;
+/*Request slots amount for root 4 bits( 1 ~ 15 ) which actually mean 2~16 slots to allocate,reserved 0 for not sendeing to parent.*/
+uint8_t orchestra_request_slots_for_root=0;
+uint8_t orchestra_requested_slots_frome_child=0;
 
 #endif /* UIP_H_ */
 
