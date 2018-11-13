@@ -236,7 +236,6 @@ void slot_request_acked(){
     uint16_t parent_group_offset;
     parent_group_offset = get_group_offset(&orchestra_parent_linkaddr);
     groups[parent_group_offset].required_slot = orchestra_request_slots_for_root;
-    orchestra_request_slots_for_root = 0;
     PRINTF("slot_request_acked %d\n", groups[parent_group_offset].required_slot);
   }
 }
@@ -246,6 +245,7 @@ get_request_slots_for_root()
 {
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
+  is_time_source(dest);
   PRINTF("get_request_slots_for_root %d\n", orchestra_request_slots_for_root);
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null) && is_time_source(dest)) {
