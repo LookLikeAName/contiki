@@ -246,10 +246,10 @@ get_request_slots_for_root()
 {
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
-  
+  PRINTF("get_request_slots_for_root %d\n", orchestra_request_slots_for_root);
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null) && is_time_source(dest)) {
-      PRINTF("get_request_slots_for_root %d\n", orchestra_request_slots_for_root);
+      PRINTF("get_request_slots_for_root is parent%d\n", orchestra_request_slots_for_root);
     return orchestra_request_slots_for_root;
   }
   return 0;
