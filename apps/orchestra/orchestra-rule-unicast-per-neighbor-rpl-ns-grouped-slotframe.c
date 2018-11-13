@@ -204,7 +204,7 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
 #if TSCH_CALLBACK_GROUPED_NESS_CONF
 int is_slot_for_parent(const struct tsch_link *link){
   uint16_t parent_slot_offset_start;
-  uint16_t group_offset;
+  uint16_t parent_group_offset;
 
   parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
   parent_slot_offset_start = group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
@@ -228,6 +228,7 @@ int is_packet_for_parent(struct queuebuf *buf){
 }
 
 void request_slot_routine(uint16_t used_slot){
+  uint16_t parent_group_offset;
   parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
   if(used_slot>ADD_THRESHOLD)
   {
@@ -245,7 +246,8 @@ void request_slot_routine(uint16_t used_slot){
 
 void slot_request_acked(){
   if(orchestra_request_slots_for_root!=0){
-    parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
+    uint16_t parent_group_offset;
+    parent_group_offset = get_group_offset(&orchestra_parent_linkaddr);
     groups[parent_group_offset].required_slot = orchestra_request_slots_for_root;
     orchestra_request_slots_for_root = 0;
     PRINTF("slot_request_acked %d\n", groups[parent_group_offset].required_slot);
