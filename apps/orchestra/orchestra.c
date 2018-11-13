@@ -234,12 +234,12 @@ void
  }
 
  uint8_t
- orchestra_callback_get_request_slots_for_root()
+ orchestra_callback_get_request_slots_for_root(linkaddr_t *dest)
  {
    int i;
    for(i = 0; i < NUM_RULES; i++) {
      if(all_rules[i]->get_request_slots_for_root != NULL) {
-        return all_rules[i]->get_request_slots_for_root();
+        return all_rules[i]->get_request_slots_for_root(dest);
      }
    }
  }

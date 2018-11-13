@@ -58,7 +58,7 @@ struct orchestra_rule {
   int (* is_packet_for_parent)(struct queuebuf *buf);
   void (*request_slot_routine)(uint16_t used_slot);
   void (*slot_request_acked)();
-  uint8_t (*get_request_slots_for_root)();
+  uint8_t (*get_request_slots_for_root)(linkaddr_t *dest);
   void (*set_requested_slots_from_child)(uint8_t requested_slots_frome_child);
   void (*slot_allocate_routine)()
   #endif
@@ -94,7 +94,7 @@ int orchestra_callback_is_slot_for_parent(const struct tsch_link *link);
 int orchestra_callback_is_packet_for_parent(struct queuebuf *buf);
 void orchestra_callback_request_slot_routine(uint16_t used_slot);
 void orchestra_callback_slot_request_acked();
-uint8_t orchestra_callback_get_request_slots_for_root();
+uint8_t orchestra_callback_get_request_slots_for_root(linkaddr_t *dest);
 void orchestra_callback_set_requested_slots_from_child(uint16_t requested_slots_frome_child);
 void orchestra_callback_slot_allocate_routine();
 #endif

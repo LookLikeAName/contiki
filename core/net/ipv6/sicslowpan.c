@@ -723,7 +723,7 @@ compress_hdr_iphc(linkaddr_t *link_destaddr)
   #if WITH_ORCHESTRA
   /*Compress the orchestra_request_slots_for_root into tc flow's four significant bits*/
     uint8_t ors;
-    ors = (TSCH_CALLBACK_GET_REQUEST_SLOTS_FOR_ROOT() & 0x0F);
+    ors = (TSCH_CALLBACK_GET_REQUEST_SLOTS_FOR_ROOT(link_destaddr) & 0x0F);
     UIP_IP_BUF->tcflow = (ors << 4) | UIP_IP_BUF->tcflow ;
     PRINTF("UIP_IP_BUF->tcflow : %02x , ors: %02x \n",UIP_IP_BUF->tcflow,ors);
   #endif
