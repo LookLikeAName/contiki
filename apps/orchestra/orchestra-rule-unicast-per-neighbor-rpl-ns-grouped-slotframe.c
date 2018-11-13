@@ -240,6 +240,7 @@ void request_slot_routine(uint16_t used_slot){
   {
     orchestra_request_slots_for_root = 0;
   }
+  PRINTF("request_slot_routine %d\n",orchestra_request_slots_for_root);
 }
 
 void slot_request_acked(){
@@ -247,6 +248,7 @@ void slot_request_acked(){
     parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
     groups[parent_group_offset].required_slot = orchestra_request_slots_for_root;
     orchestra_request_slots_for_root = 0;
+    PRINTF("slot_request_acked %d\n", groups[parent_group_offset].required_slot);
   }
 }
 #endif

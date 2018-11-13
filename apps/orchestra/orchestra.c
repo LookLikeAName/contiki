@@ -217,8 +217,7 @@ void
    int i;
    for(i = 0; i < NUM_RULES; i++) {
      if(all_rules[i]->request_slot_routine != NULL) {
-        if(all_rules[i]->request_slot_routine(used_slot)){
-        }
+        all_rules[i]->request_slot_routine(used_slot);
      }
    }
  }
@@ -229,8 +228,7 @@ void
    int i;
    for(i = 0; i < NUM_RULES; i++) {
      if(all_rules[i]->slot_request_acked != NULL) {
-        if(all_rules[i]->slot_request_acked()){
-        }
+        all_rules[i]->slot_request_acked();
      }
    }
  }
