@@ -102,13 +102,13 @@ static int
 is_time_source(const linkaddr_t *linkaddr)
 {
      if(linkaddr != NULL && !linkaddr_cmp(linkaddr, &linkaddr_null)) {
-      PRINTF("parent null %d\n",linkaddr_cmp(&orchestra_parent_linkaddr, &linkaddr_null));
+    //  PRINTF("parent null %d\n",linkaddr_cmp(&orchestra_parent_linkaddr, &linkaddr_null));
       if(linkaddr_cmp(&orchestra_parent_linkaddr, linkaddr)) {
-        PRINTF("is_time_source 1 \n");
+       // PRINTF("is_time_source 1 \n");
         return 1;
       }  
     }
-  PRINTF("is_time_source 0 \n");  
+ // PRINTF("is_time_source 0 \n");  
   return 0;
 }
 /*---------------------------------------------------------------------------*/
@@ -156,7 +156,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
 static int
 packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
 {
-    PRINTF("orchestra NOACK\n");
+   // PRINTF("orchestra NOACK\n");
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
   if(((((uint8_t *)(queuebuf_dataptr(buf)))[0]) & 7) == FRAME802154_DATAFRAME
@@ -203,7 +203,7 @@ int is_slot_for_parent(const struct tsch_link *link){
 }
 
 int is_packet_for_parent(struct queuebuf *buf){
-  PRINTF("is_packet_for_parent \n");
+  //PRINTF("is_packet_for_parent \n");
   const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
   return is_time_source(dest);
 }
@@ -222,7 +222,7 @@ void request_slot_routine(uint16_t used_slot){
   {
     orchestra_request_slots_for_root = 0;
   }
-  PRINTF("request_slot_routine %d\n",orchestra_request_slots_for_root);
+  PRINTF("request_slot_routine %d , used %d\n",orchestra_request_slots_for_root,used_slot);
 }
 
 void slot_request_acked(){
