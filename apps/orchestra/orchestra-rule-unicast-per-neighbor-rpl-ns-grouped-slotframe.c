@@ -219,8 +219,8 @@ void request_slot_routine(uint16_t used_slot){
   else if(used_slot<DELETE_THRESHOLD)
   {
     orchestra_request_slots_for_root = ((groups[parent_group_offset].required_slot-1) < 1) ? 0 : groups[parent_group_offset].required_slot-1;
-    if(groups[parent_group_offset].required_slot == 1){
-      orchestra_request_slots_for_root = 1;
+    if(groups[parent_group_offset].required_slot==1){
+      orchestra_request_slots_for_root=1;
     }
     PRINTF("DELETE_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
   }
@@ -258,12 +258,13 @@ void
 set_requested_slots_frome_child(uint8_t requested_slots_frome_child)
 {
   orchestra_requested_slots_from_child = requested_slots_frome_child;
+  PRINTF("set_requested_slots_frome_child: %02x, %d \n",requested_slots_frome_child,orchestra_requested_slots_from_child);
 }
 
 void
 slot_allocate_routine()
 {
- //PRINTF("Rule ns grouped slotframe requested slots: %02x \n",orchestra_requested_slots_from_child);
+ 
   uint16_t node_group_offset;
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
@@ -281,7 +282,7 @@ slot_allocate_routine()
       }
     }
   }
-  PRINTF("groups[node_group_offset].required_slot: %02x , %d\n",groups[node_group_offset].required_slot,orchestra_requested_slots_from_child);
+  PRINTF("groups[node_group_offset].required_slot: %02x , %d ,count down %d\n",groups[node_group_offset].required_slot,orchestra_requested_slots_from_child,packet_countdown);
   orchestra_requested_slots_from_child=0;
 }
 #endif
