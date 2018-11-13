@@ -57,6 +57,9 @@ static uint16_t channel_offset = 0;
 static struct tsch_slotframe *sf_unicast;
 static uint16_t packet_countdown = 10;
 
+extern uint8_t orchestra_request_slots_for_root;
+extern uint8_t orchestra_requested_slots_frome_child;
+
 struct group_attribute_s{
   uint16_t required_slot;
   uint16_t allocate_slot_offset;

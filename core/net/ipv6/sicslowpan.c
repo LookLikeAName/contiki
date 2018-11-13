@@ -213,6 +213,9 @@ static int last_tx_status;
 
 static int last_rssi;
 
+
+extern uint8_t orchestra_request_slots_for_root;
+extern uint8_t orchestra_requested_slots_frome_child;
 /* ----------------------------------------------------------------- */
 /* Support for reassembling multiple packets                         */
 /* ----------------------------------------------------------------- */
