@@ -207,7 +207,7 @@ int is_slot_for_parent(const struct tsch_link *link){
   uint16_t parent_group_offset;
 
   parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
-  parent_slot_offset_start = group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
+  parent_slot_offset_start = parent_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
   
   if(link->slotframe_handle == slotframe_handle && parent_group_offset != 0){ 
     
