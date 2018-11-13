@@ -278,6 +278,7 @@ slot_allocate_routine()
       }
     }
   }
+  packet_countdown = 10;
   PRINTF("groups[node_group_offset].required_slot: %02x , %d ,count down %d\n",groups[node_group_offset].required_slot,orchestra_requested_slots_from_child,packet_countdown);
   orchestra_requested_slots_from_child=0;
 }
