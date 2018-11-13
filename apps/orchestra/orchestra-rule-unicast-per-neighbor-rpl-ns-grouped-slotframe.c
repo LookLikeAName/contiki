@@ -215,7 +215,7 @@ void request_slot_routine(uint16_t used_slot){
   if(used_slot>ADD_THRESHOLD)
   {
     orchestra_request_slots_for_root = groups[parent_group_offset].required_slot+1 > ORCHESTRA_SLOTFRAME_GROUP_SIZE ? 0 : groups[parent_group_offset].required_slot+1;
-    PRINTF("ADD_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
+    //PRINTF("ADD_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
   }
   else if(used_slot<DELETE_THRESHOLD)
   {
@@ -223,13 +223,13 @@ void request_slot_routine(uint16_t used_slot){
     if(groups[parent_group_offset].required_slot==1){
       orchestra_request_slots_for_root=1;
     }
-    PRINTF("DELETE_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
+    //PRINTF("DELETE_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
   }
   else
   {
     orchestra_request_slots_for_root = 0;
   }
-  PRINTF("request_slot_routine %d , used %d\n",orchestra_request_slots_for_root,used_slot);
+ // PRINTF("request_slot_routine %d , used %d\n",orchestra_request_slots_for_root,used_slot);
 }
 
 void slot_request_acked(){
@@ -245,7 +245,7 @@ uint8_t
 get_request_slots_for_root(linkaddr_t *dest)
 {
   /* Select data packets we have a unicast link to */
-  PRINTF("get_request_slots_for_root %d ,%d\n", orchestra_request_slots_for_root,is_time_source(dest));
+//  PRINTF("get_request_slots_for_root %d ,%d\n", orchestra_request_slots_for_root,is_time_source(dest));
   if(!linkaddr_cmp(dest, &linkaddr_null) && is_time_source(dest)) {
       PRINTF("get_request_slots_for_root is parent%d\n", orchestra_request_slots_for_root);
     return orchestra_request_slots_for_root;
@@ -257,7 +257,7 @@ void
 set_requested_slots_frome_child(uint8_t requested_slots_frome_child)
 {
   orchestra_requested_slots_from_child = requested_slots_frome_child;
-  PRINTF("set_requested_slots_frome_child: %02x, %d \n",requested_slots_frome_child,orchestra_requested_slots_from_child);
+ /// PRINTF("set_requested_slots_frome_child: %02x, %d \n",requested_slots_frome_child,orchestra_requested_slots_from_child);
 }
 
 void
