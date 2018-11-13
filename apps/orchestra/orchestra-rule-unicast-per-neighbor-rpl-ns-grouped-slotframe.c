@@ -305,8 +305,6 @@ init(uint16_t sf_handle)
   uint16_t rx_timeslot;
   slotframe_handle = sf_handle;
   channel_offset = sf_handle;
-  // Debug testing field
-  orchestra_request_slots_for_root = get_group_offset(&linkaddr_node_addr);
 
   /*Initial groups attribute*/
   for(i=0;i<ORCHESTRA_SLOTFRAME_GROUP_AMOUNT;i++){
