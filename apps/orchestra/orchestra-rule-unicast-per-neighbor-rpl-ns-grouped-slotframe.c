@@ -57,7 +57,7 @@ static uint16_t channel_offset = 0;
 static struct tsch_slotframe *sf_unicast;
 static uint16_t packet_countdown = 10;
 
-/*Request slots amount for root 4 bits( 1 ~ 15 ) which actually mean 2~16 slots to allocate,reserved 0 for not sendeing to parent.*/
+/*Request slots amount for root 4 bits( 1 ~ 15 ) which actually mean 1~15 slots to allocate,reserved 0 for not sendeing to parent.*/
 uint8_t orchestra_request_slots_for_root=0;
 uint8_t orchestra_requested_slots_from_child=0;
 
@@ -242,8 +242,8 @@ get_request_slots_for_root()
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
   
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
-     && !linkaddr_cmp(dest, &linkaddr_null)&&is_time_source(dest)&&(orchestra_request_slots_for_root-1)>0) {
-    return orchestra_request_slots_for_root-1;
+     && !linkaddr_cmp(dest, &linkaddr_null)&&is_time_source(dest)) {
+    return orchestra_request_slots_for_root;
   }
   return 0;
 }
@@ -251,7 +251,7 @@ get_request_slots_for_root()
 void
 set_requested_slots_frome_child(uint8_t requested_slots_frome_child)
 {
-  orchestra_requested_slots_from_child = (requested_slots_frome_child==0) ? 0:requested_slots_frome_child+1;
+  orchestra_requested_slots_from_child = requested_slots_frome_child;
 }
 
 void
@@ -264,19 +264,19 @@ slot_allocate_routine()
   if(orchestra_requested_slots_from_child<ORCHESTRA_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_from_child > 0){
    if(orchestra_requested_slots_from_child>=groups[node_group_offset].required_slot){
       packet_countdown = 10;
-      groups[node_group_offset].required_slot+=(orchestra_requested_slots_from_child-groups[node_group_offset].required_slot);
+      groups[node_group_offset].required_slot=orchestra_requested_slots_from_child;
     }
     else
     {
       packet_countdown--;
       if(packet_countdown == 0){
         packet_countdown = 10;
-        groups[node_group_offset].required_slot-=(groups[node_group_offset].required_slot-orchestra_requested_slots_from_child);
+        groups[node_group_offset].required_slot=orchestra_requested_slots_from_child;
       }
     }
   }
-  PRINTF("groups[node_group_offset].required_slot: %02x \n",groups[node_group_offset].required_slot);
-  
+  PRINTF("groups[node_group_offset].required_slot: %02x , %d\n",groups[node_group_offset].required_slot,orchestra_requested_slots_from_child);
+  orchestra_requested_slots_from_child=0;
 }
 #endif
 /*---------------------------------------------------------------------------*/
