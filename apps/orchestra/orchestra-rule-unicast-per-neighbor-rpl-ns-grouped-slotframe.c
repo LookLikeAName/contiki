@@ -251,7 +251,7 @@ get_request_slots_for_root()
 void
 set_requested_slots_frome_child(uint8_t requested_slots_frome_child)
 {
-  orchestra_requested_slots_from_child = requested_slots_frome_child+1;
+  orchestra_requested_slots_from_child = (requested_slots_frome_child==0) ? 0:requested_slots_frome_child+1;
 }
 
 void
