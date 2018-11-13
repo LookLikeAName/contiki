@@ -219,6 +219,9 @@ void request_slot_routine(uint16_t used_slot){
   else if(used_slot<DELETE_THRESHOLD)
   {
     orchestra_request_slots_for_root = ((groups[parent_group_offset].required_slot-1) < 1) ? 0 : groups[parent_group_offset].required_slot-1;
+    if(groups[parent_group_offset].required_slot == 1){
+      orchestra_request_slots_for_root = 1;
+    }
     PRINTF("DELETE_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
   }
   else
