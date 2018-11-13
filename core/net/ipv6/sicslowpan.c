@@ -72,7 +72,7 @@
 
 #include <stdio.h>
 
-#define DEBUG 0
+#define DEBUG 1
 #include "net/ip/uip-debug.h"
 #if DEBUG
 /* PRINTFI and PRINTFO are defined for input and output to debug one without changing the timing of the other */
@@ -1018,6 +1018,7 @@ uncompress_hdr_iphc(uint8_t *buf, uint16_t ip_len)
     }
     #if WITH_ORCHESTRA
     /*Decompress the tc flow and get the data of orchestra_requested_slots_from_child*/
+    PRINTF("decomp : %d",(SICSLOWPAN_IP_BUF(buf)->tcflow & 0xF0) >> 4);
     TSCH_CALLBACK_SET_REQUEST_SLOTS_FROM_CHILD((SICSLOWPAN_IP_BUF(buf)->tcflow & 0xF0) >> 4);
     TSCH_CALLBACK_SLOT_ALLOCATE_ROUTINE();
     SICSLOWPAN_IP_BUF(buf)->tcflow = (SICSLOWPAN_IP_BUF(buf)->tcflow & 0x0F);
