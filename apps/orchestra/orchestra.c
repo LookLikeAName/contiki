@@ -245,12 +245,12 @@ void
  }
 
  void
- orchestra_callback_set_requested_slots_frome_child(uint16_t requested_slots_frome_child)
+ orchestra_callback_set_requested_slots_from_child(uint16_t requested_slots_frome_child)
  {
    int i;
    for(i = 0; i < NUM_RULES; i++) {
-     if(all_rules[i]->set_requested_slots_frome_child != NULL) {
-        all_rules[i]->set_requested_slots_frome_child(requested_slots_frome_child);
+     if(all_rules[i]->set_requested_slots_from_child != NULL) {
+        all_rules[i]->set_requested_slots_from_child(requested_slots_frome_child);
      }
    }
  }
