@@ -214,15 +214,12 @@ void request_slot_routine(uint16_t used_slot){
   parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
   if(used_slot>ADD_THRESHOLD)
   {
-    orchestra_request_slots_for_root = groups[parent_group_offset].required_slot+1 > ORCHESTRA_SLOTFRAME_GROUP_SIZE ? 0 : groups[parent_group_offset].required_slot+1;
+    orchestra_request_slots_for_root = groups[parent_group_offset].required_slot+1 > ORCHESTRA_SLOTFRAME_GROUP_SIZE ? ORCHESTRA_SLOTFRAME_GROUP_SIZ5 : groups[parent_group_offset].required_slot+1;
     PRINTF("ADD_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
   }
   else if(used_slot<DELETE_THRESHOLD)
   {
-    orchestra_request_slots_for_root = ((groups[parent_group_offset].required_slot-1) < 1) ? 0 : groups[parent_group_offset].required_slot-1;
-    if(groups[parent_group_offset].required_slot==1){
-      orchestra_request_slots_for_root=1;
-    }
+    orchestra_request_slots_for_root = ((groups[parent_group_offset].required_slot-1) < 1) ? 1 : groups[parent_group_offset].required_slot-1;
     PRINTF("DELETE_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
   }
   else
