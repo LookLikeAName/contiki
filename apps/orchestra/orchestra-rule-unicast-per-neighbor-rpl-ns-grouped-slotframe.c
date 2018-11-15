@@ -108,11 +108,12 @@ add_self_uc_link()
   add_first_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
     /* Add/update link */
     for(i = 0; i < add_count; i++) {
+
       tsch_schedule_add_link(sf_unicast,
           LINK_OPTION_SHARED | LINK_OPTION_TX | LINK_OPTION_RX,
           LINK_TYPE_NORMAL, &tsch_broadcast_address,
           add_first_slot_offset, channel_offset);
-        }
+          
       add_first_slot_offset++;
 }
 /*---------------------------------------------------------------------------*/
@@ -120,7 +121,7 @@ static void
 delete_self_uc_link()
 {
 
-  struct tsch_link *l;
+  
   uint16_t node_group_offset;
   uint16_t delete_first_slot_offset;
   int i;
@@ -129,11 +130,12 @@ delete_self_uc_link()
   delete_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
     /* update link */
     for(i = 0; i < delete_count; i++) {
+
       tsch_schedule_add_link(sf_unicast,
         LINK_OPTION_SHARED | LINK_OPTION_TX,
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         delete_slot_offset, channel_offset);
-      }
+
       delete_slot_offset--;
     }
 }
