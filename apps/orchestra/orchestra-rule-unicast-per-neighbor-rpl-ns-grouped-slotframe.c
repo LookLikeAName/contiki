@@ -106,7 +106,7 @@ add_self_uc_link(uint8_t requested_slots)
   node_group_offset=get_group_offset(&linkaddr_node_addr);
   int add_count = requested_slots-groups[node_group_offset].required_slot;
   add_first_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
-  PRINTF("add link: %d %d\n",add_count,add_first_slot_offset);  
+  PRINTF("add link: %d %d %d\n",add_count,add_first_slot_offset,requested_slots);  
   /* Add/update link */
     for(i = 0; i < add_count; i++) {
       add_first_slot_offset++;
@@ -307,7 +307,7 @@ slot_allocate_routine()
   uint16_t node_group_offset;
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
-  if(orchestra_requested_slots_from_child<ORCHESTRA_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_from_child > 0){
+  if(orchestra_requested_slots_from_child<=ORCHESTRA_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_from_child > 0){
    if(orchestra_requested_slots_from_child > groups[node_group_offset].required_slot){
       packet_countdown = 10;
       add_self_uc_link(orchestra_requested_slots_from_child);
