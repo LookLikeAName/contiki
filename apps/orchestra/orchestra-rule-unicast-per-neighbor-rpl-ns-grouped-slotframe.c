@@ -130,7 +130,7 @@ delete_self_uc_link()
   node_group_offset=get_group_offset(&linkaddr_node_addr);
   int delete_count = groups[node_group_offset].required_slot - orchestra_requested_slots_from_child;
   delete_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
-  PRINTF("delete link %d %d",add_count,delete_slot_offset);  
+  PRINTF("delete link %d %d",delete_count,delete_slot_offset);  
   /* update link */
     for(i = 0; i < delete_count; i++) {
 
