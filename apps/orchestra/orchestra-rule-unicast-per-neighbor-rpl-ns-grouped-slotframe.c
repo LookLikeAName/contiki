@@ -114,7 +114,7 @@ add_self_uc_link()
           LINK_OPTION_SHARED | LINK_OPTION_TX | LINK_OPTION_RX,
           LINK_TYPE_NORMAL, &tsch_broadcast_address,
           add_first_slot_offset, channel_offset);
-      PRINTF("add link loop: %d %d %d\n",i,add_first_slot_offset,l==NULL);  
+      PRINTF("add link loop: %d %d %d\n",i,add_first_slot_offset,l==NULL?0:l->link_options);  
       add_first_slot_offset++;
     }
 }
