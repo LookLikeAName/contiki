@@ -96,7 +96,47 @@ get_node_timeslot(const linkaddr_t *addr)
   }
 }
 /*---------------------------------------------------------------------------*/
+static void
+add_self_uc_link()
+{
+  
+  uint16_t node_group_offset;
+  uint16_t add_first_slot_offset;
+  int i;
+  int add_count = orchestra_requested_slots_from_child-groups[node_group_offset].required_slot; 
+  node_group_offset=get_group_offset(&linkaddr_node_addr);
+  add_first_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
+    /* Add/update link */
+    for(i = 0; i < add_count; i++) {
+      tsch_schedule_add_link(sf_unicast,
+          LINK_OPTION_SHARED | LINK_OPTION_TX | LINK_OPTION_RX,
+          LINK_TYPE_NORMAL, &tsch_broadcast_address,
+          add_first_slot_offset, channel_offset);
+        }
+      add_first_slot_offset++;
+}
+/*---------------------------------------------------------------------------*/
+static void
+delete_self_uc_link()
+{
 
+  struct tsch_link *l;
+  uint16_t node_group_offset;
+  uint16_t delete_first_slot_offset;
+  int i;
+  int delete_count = groups[node_group_offset].required_slot - orchestra_requested_slots_from_child;
+  node_group_offset=get_group_offset(&linkaddr_node_addr);
+  delete_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
+    /* update link */
+    for(i = 0; i < delete_count; i++) {
+      tsch_schedule_add_link(sf_unicast,
+        LINK_OPTION_SHARED | LINK_OPTION_TX,
+        LINK_TYPE_NORMAL, &tsch_broadcast_address,
+        delete_slot_offset, channel_offset);
+      }
+      delete_slot_offset--;
+    }
+}
 /*---------------------------------------------------------------------------*/
 static int
 is_time_source(const linkaddr_t *linkaddr)
@@ -261,15 +301,21 @@ slot_allocate_routine()
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
   if(orchestra_requested_slots_from_child<ORCHESTRA_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_from_child > 0){
-   if(orchestra_requested_slots_from_child>=groups[node_group_offset].required_slot){
+   if(orchestra_requested_slots_from_child > groups[node_group_offset].required_slot){
       packet_countdown = 10;
+      add_self_uc_link();
       groups[node_group_offset].required_slot=orchestra_requested_slots_from_child;
+    }
+    else if(orchestra_requested_slots_from_child == groups[node_group_offset].required_slot)
+    {
+      packet_countdown = 10;
     }
     else
     {
       packet_countdown--;
       if(packet_countdown == 0){
         packet_countdown = 10;
+        delete_self_uc_link();
         groups[node_group_offset].required_slot=orchestra_requested_slots_from_child;
       }
     }
@@ -316,12 +362,9 @@ init(uint16_t sf_handle)
   /* Add a Tx link at each available timeslot. Make the link Rx at our own timeslot. */
   for(i = 0; i < ORCHESTRA_GROUPED_UNICAST_PERIOD; i++) {
     tsch_schedule_add_link(sf_unicast,
-        LINK_OPTION_SHARED | LINK_OPTION_TX | (((i >= rx_timeslot) && (i < rx_timeslot+ORCHESTRA_SLOTFRAME_GROUP_SIZE)) ? LINK_OPTION_RX : 0 ),
+        LINK_OPTION_SHARED | LINK_OPTION_TX | (((i >= rx_timeslot) && (i < rx_timeslot+group_attribute_default.required_slot)) ? LINK_OPTION_RX : 0 ),
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         i, channel_offset);
-        /*if(i == rx_timeslot){
-          i+=(ORCHESTRA_SLOTFRAME_GROUP_SIZE-1);
-        }*/
   }
 }
 /*---------------------------------------------------------------------------*/
