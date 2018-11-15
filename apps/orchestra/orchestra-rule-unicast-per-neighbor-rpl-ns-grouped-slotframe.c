@@ -99,7 +99,7 @@ get_node_timeslot(const linkaddr_t *addr)
 static void
 add_self_uc_link()
 {
-  
+  struct tsch_link *l;
   uint16_t node_group_offset;
   uint16_t add_first_slot_offset;
   int i;
@@ -110,11 +110,11 @@ add_self_uc_link()
   /* Add/update link */
     for(i = 0; i < add_count; i++) {
 
-      tsch_schedule_add_link(sf_unicast,
+     l = tsch_schedule_add_link(sf_unicast,
           LINK_OPTION_SHARED | LINK_OPTION_TX | LINK_OPTION_RX,
           LINK_TYPE_NORMAL, &tsch_broadcast_address,
           add_first_slot_offset, channel_offset);
-      PRINTF("add link loop: %d %d\n",i,add_first_slot_offset);  
+      PRINTF("add link loop: %d %d %d\n",i,add_first_slot_offset,l==NULL);  
       add_first_slot_offset++;
     }
 }
