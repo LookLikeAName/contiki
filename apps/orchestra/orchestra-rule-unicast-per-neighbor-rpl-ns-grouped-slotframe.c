@@ -306,14 +306,10 @@ slot_allocate_routine()
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
   if(orchestra_requested_slots_from_child<ORCHESTRA_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_from_child > 0){
-   if(orchestra_requested_slots_from_child > groups[node_group_offset].required_slot){
+   if(orchestra_requested_slots_from_child >= groups[node_group_offset].required_slot){
       packet_countdown = 10;
       add_self_uc_link();
       groups[node_group_offset].required_slot=orchestra_requested_slots_from_child;
-    }
-    else if(orchestra_requested_slots_from_child == groups[node_group_offset].required_slot)
-    {
-      packet_countdown = 10;
     }
     else
     {
