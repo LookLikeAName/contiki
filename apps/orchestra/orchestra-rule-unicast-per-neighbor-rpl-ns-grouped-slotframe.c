@@ -222,10 +222,6 @@ void request_slot_routine(uint16_t used_slot){
     orchestra_request_slots_for_root = ((groups[parent_group_offset].required_slot-1) < 1) ? 1 : groups[parent_group_offset].required_slot-1;
     PRINTF("DELETE_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
   }
-  else
-  {
-    orchestra_request_slots_for_root = 0;
-  }
   PRINTF("request_slot_routine %d , used %d\n",orchestra_request_slots_for_root,used_slot);
 }
 
@@ -244,7 +240,7 @@ get_request_slots_for_root(linkaddr_t *dest)
   /* Select data packets we have a unicast link to */
 //  PRINTF("get_request_slots_for_root %d ,%d\n", orchestra_request_slots_for_root,is_time_source(dest));
   if(!linkaddr_cmp(dest, &linkaddr_null) && is_time_source(dest)) {
-      PRINTF("get_request_slots_for_root is parent%d\n", orchestra_request_slots_for_root);
+      PRINTF("get_request_slots_for_root is parent %d\n", orchestra_request_slots_for_root);
     return orchestra_request_slots_for_root;
   }
   return 0;
