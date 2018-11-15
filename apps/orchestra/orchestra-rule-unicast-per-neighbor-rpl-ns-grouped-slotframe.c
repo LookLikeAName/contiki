@@ -124,7 +124,7 @@ delete_self_uc_link()
 
   
   uint16_t node_group_offset;
-  uint16_t delete_first_slot_offset;
+  uint16_t delete_slot_offset;
   int i;
   int delete_count = groups[node_group_offset].required_slot - orchestra_requested_slots_from_child;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
