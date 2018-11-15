@@ -106,7 +106,7 @@ add_self_uc_link()
   node_group_offset=get_group_offset(&linkaddr_node_addr);
   int add_count = orchestra_requested_slots_from_child-groups[node_group_offset].required_slot;
   add_first_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
-  PRINTF("add link %d %d",add_count,add_first_slot_offset);  
+  PRINTF("add link: %d %d\n",add_count,add_first_slot_offset);  
   /* Add/update link */
     for(i = 0; i < add_count; i++) {
 
@@ -114,7 +114,7 @@ add_self_uc_link()
           LINK_OPTION_SHARED | LINK_OPTION_TX | LINK_OPTION_RX,
           LINK_TYPE_NORMAL, &tsch_broadcast_address,
           add_first_slot_offset, channel_offset);
-
+      PRINTF("add link loop: %d %d\n",i,add_first_slot_offset);  
       add_first_slot_offset++;
     }
 }
@@ -130,7 +130,7 @@ delete_self_uc_link()
   node_group_offset=get_group_offset(&linkaddr_node_addr);
   int delete_count = groups[node_group_offset].required_slot - orchestra_requested_slots_from_child;
   delete_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
-  PRINTF("delete link %d %d",delete_count,delete_slot_offset);  
+  PRINTF("delete link: %d %d\n",delete_count,delete_slot_offset);  
   /* update link */
     for(i = 0; i < delete_count; i++) {
 
@@ -138,7 +138,7 @@ delete_self_uc_link()
         LINK_OPTION_SHARED | LINK_OPTION_TX,
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         delete_slot_offset, channel_offset);
-
+        PRINTF("delete link loop: %d %d\n",i,delete_slot_offset);  
       delete_slot_offset--;
     }
 }
