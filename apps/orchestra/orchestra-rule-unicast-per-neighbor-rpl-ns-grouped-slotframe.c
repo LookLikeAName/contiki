@@ -97,14 +97,14 @@ get_node_timeslot(const linkaddr_t *addr)
 }
 /*---------------------------------------------------------------------------*/
 static void
-add_self_uc_link()
+add_self_uc_link(uint8_t requested_slots)
 {
   struct tsch_link *l;
   uint16_t node_group_offset;
   uint16_t add_first_slot_offset;
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
-  int add_count = orchestra_requested_slots_from_child-groups[node_group_offset].required_slot;
+  int add_count = requested_slots-groups[node_group_offset].required_slot;
   add_first_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
   PRINTF("add link: %d %d\n",add_count,add_first_slot_offset);  
   /* Add/update link */
@@ -117,10 +117,11 @@ add_self_uc_link()
       PRINTF("add link loop: %d %d %d\n",i,add_first_slot_offset,l==NULL?0:l->link_options);  
       
     }
+    groups[node_group_offset].required_slot = requested_slots;
 }
 /*---------------------------------------------------------------------------*/
 static void
-delete_self_uc_link()
+delete_self_uc_link(uint8_t requested_slots)
 {
 
   
@@ -128,7 +129,7 @@ delete_self_uc_link()
   uint16_t delete_slot_offset;
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
-  int delete_count = groups[node_group_offset].required_slot - orchestra_requested_slots_from_child;
+  int delete_count = groups[node_group_offset].required_slot - requested_slots;
   delete_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
   PRINTF("delete link: %d %d\n",delete_count,delete_slot_offset);  
   /* update link */
@@ -141,6 +142,7 @@ delete_self_uc_link()
         PRINTF("delete link loop: %d %d\n",i,delete_slot_offset);  
       delete_slot_offset--;
     }
+    groups[node_group_offset].required_slot=requested_slots;
 }
 /*---------------------------------------------------------------------------*/
 static int
@@ -308,16 +310,20 @@ slot_allocate_routine()
   if(orchestra_requested_slots_from_child<ORCHESTRA_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_from_child > 0){
    if(orchestra_requested_slots_from_child >= groups[node_group_offset].required_slot){
       packet_countdown = 10;
-      add_self_uc_link();
-      groups[node_group_offset].required_slot=orchestra_requested_slots_from_child;
+      add_self_uc_link(orchestra_requested_slots_from_child);
+      
+    }
+    else if(orchestra_requested_slots_from_child == groups[node_group_offset].required_slot)
+    {
+      packet_countdown = 10;
     }
     else
     {
       packet_countdown--;
       if(packet_countdown == 0){
         packet_countdown = 10;
-        delete_self_uc_link();
-        groups[node_group_offset].required_slot=orchestra_requested_slots_from_child;
+        delete_self_uc_link(orchestra_requested_slots_from_child);
+        
       }
     }
   }
