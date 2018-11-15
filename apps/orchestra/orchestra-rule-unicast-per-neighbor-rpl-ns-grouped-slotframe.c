@@ -109,13 +109,13 @@ add_self_uc_link()
   PRINTF("add link: %d %d\n",add_count,add_first_slot_offset);  
   /* Add/update link */
     for(i = 0; i < add_count; i++) {
-
+      add_first_slot_offset++;
      l = tsch_schedule_add_link(sf_unicast,
           LINK_OPTION_SHARED | LINK_OPTION_TX | LINK_OPTION_RX,
           LINK_TYPE_NORMAL, &tsch_broadcast_address,
           add_first_slot_offset, channel_offset);
       PRINTF("add link loop: %d %d %d\n",i,add_first_slot_offset,l==NULL?0:l->link_options);  
-      add_first_slot_offset++;
+      
     }
 }
 /*---------------------------------------------------------------------------*/
