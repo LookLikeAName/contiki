@@ -44,7 +44,7 @@
 #include "net/packetbuf.h"
 #include <stdio.h>
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 #define PRINTF(...) printf(__VA_ARGS__)
 #else
@@ -103,10 +103,11 @@ add_self_uc_link()
   uint16_t node_group_offset;
   uint16_t add_first_slot_offset;
   int i;
-  int add_count = orchestra_requested_slots_from_child-groups[node_group_offset].required_slot; 
   node_group_offset=get_group_offset(&linkaddr_node_addr);
+  int add_count = orchestra_requested_slots_from_child-groups[node_group_offset].required_slot;
   add_first_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
-    /* Add/update link */
+  PRINTF("add link %d %d",add_count,add_first_slot_offset);  
+  /* Add/update link */
     for(i = 0; i < add_count; i++) {
 
       tsch_schedule_add_link(sf_unicast,
@@ -126,10 +127,11 @@ delete_self_uc_link()
   uint16_t node_group_offset;
   uint16_t delete_slot_offset;
   int i;
-  int delete_count = groups[node_group_offset].required_slot - orchestra_requested_slots_from_child;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
+  int delete_count = groups[node_group_offset].required_slot - orchestra_requested_slots_from_child;
   delete_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
-    /* update link */
+  PRINTF("delete link %d %d",add_count,delete_slot_offset);  
+  /* update link */
     for(i = 0; i < delete_count; i++) {
 
       tsch_schedule_add_link(sf_unicast,
@@ -273,7 +275,7 @@ void slot_request_acked(){
     uint16_t parent_group_offset;
     parent_group_offset = get_group_offset(&orchestra_parent_linkaddr);
     groups[parent_group_offset].required_slot = orchestra_request_slots_for_root;
-    PRINTF("slot_request_acked %d\n", groups[parent_group_offset].required_slot);
+   // PRINTF("slot_request_acked %d\n", groups[parent_group_offset].required_slot);
   }
 }
 
