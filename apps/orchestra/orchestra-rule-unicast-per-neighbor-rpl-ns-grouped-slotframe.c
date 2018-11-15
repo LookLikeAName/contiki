@@ -113,8 +113,9 @@ add_self_uc_link()
           LINK_OPTION_SHARED | LINK_OPTION_TX | LINK_OPTION_RX,
           LINK_TYPE_NORMAL, &tsch_broadcast_address,
           add_first_slot_offset, channel_offset);
-          
+
       add_first_slot_offset++;
+    }
 }
 /*---------------------------------------------------------------------------*/
 static void
