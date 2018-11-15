@@ -167,7 +167,7 @@ void
   for(i = 0; i < NUM_RULES; i++) {
     if(all_rules[i]->packet_noack != NULL) {
       if(all_rules[i]->packet_noack(&slotframe, &timeslot,buf)) {
-        PRINTF("orchestra_callback_tsch_noack excute\n");
+        //PRINTF("orchestra_callback_tsch_noack excute\n");
         #if TSCH_WITH_LINK_SELECTOR
          queuebuf_set_attr(buf,PACKETBUF_ATTR_TSCH_SLOTFRAME, slotframe);
          queuebuf_set_attr(buf,PACKETBUF_ATTR_TSCH_TIMESLOT, timeslot);
