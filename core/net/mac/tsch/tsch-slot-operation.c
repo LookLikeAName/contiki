@@ -792,7 +792,8 @@ PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t))
     static rtimer_clock_t expected_rx_time;
     static rtimer_clock_t packet_duration;
     uint8_t packet_seen;
-
+    static int frame_valid;
+    
     expected_rx_time = current_slot_start + tsch_timing[tsch_ts_tx_offset];
     /* Default start time: expected Rx time */
     rx_start_time = expected_rx_time;
@@ -826,7 +827,7 @@ PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t))
       tsch_radio_off(TSCH_RADIO_CMD_OFF_WITHIN_TIMESLOT);
 
       if(NETSTACK_RADIO.pending_packet()) {
-        static int frame_valid;
+        
         static int header_len;
         static frame802154_t frame;
         radio_value_t radio_last_rssi;
