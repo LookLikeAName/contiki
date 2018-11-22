@@ -60,7 +60,8 @@ struct orchestra_rule {
   void (*slot_request_acked)();
   uint8_t (*get_request_slots_for_root)(linkaddr_t *dest);
   void (*set_requested_slots_from_child)(uint8_t requested_slots_frome_child);
-  void (*slot_allocate_routine)()
+  void (*slot_allocate_routine)();
+  void (*self_rx_maintain)(const struct tsch_link *link,uint8_t packet_receved,int frame_valid);
   #endif
 };
 
@@ -97,6 +98,7 @@ void orchestra_callback_slot_request_acked();
 uint8_t orchestra_callback_get_request_slots_for_root(linkaddr_t *dest);
 void orchestra_callback_set_requested_slots_from_child(uint16_t requested_slots_frome_child);
 void orchestra_callback_slot_allocate_routine();
+void orchestra_callback_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int frame_valid);
 #endif
 
 

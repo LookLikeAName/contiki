@@ -240,7 +240,7 @@ int is_slot_for_parent(const struct tsch_link *link){
   parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
   parent_slot_offset_start = parent_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
   
-  if(link->slotframe_handle == slotframe_handle && parent_group_offset != 0){ 
+  if(link->slotframe_handle == slotframe_handle){ 
     
       if(parent_slot_offset_start <= link->timeslot &&
          link->timeslot <  parent_slot_offset_start+groups[parent_group_offset].required_slot)
@@ -335,6 +335,35 @@ slot_allocate_routine()
   PRINTF("groups[node_group_offset].required_slot: %02x , %d ,count down %d\n",groups[node_group_offset].required_slot,orchestra_requested_slots_from_child,packet_countdown);
   orchestra_requested_slots_from_child=0;
 }
+
+
+
+void self_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int frame_valid){
+  uint16_t node_slot_offset_start;
+  uint16_t node_group_offset;
+
+  node_group_offset =get_group_offset(&linkaddr_node_addr);
+  node_slot_offset_start = node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
+  
+  if(link->slotframe_handle == slotframe_handle 
+    && (groups[node_group_offset].requested_slots -1)>0
+    && link->timeslot == parent_slot_offset_start+(groups[parent_group_offset].required_slot-1))
+    { 
+   if(!packet_receved){
+    last_rx_countdown --;
+    if(last_rx_countdown == 0){
+      last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
+      delete_self_uc_link(groups[node_group_offset].requested_slots -1 );
+    }
+   } 
+   else if(packet_receved && frame_valid)
+   {
+    last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
+   }
+   
+  }
+
+}
 #endif
 /*---------------------------------------------------------------------------*/
 static void
@@ -393,4 +422,5 @@ struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe = {
   get_request_slots_for_root,
   set_requested_slots_frome_child,
   slot_allocate_routine,
+  self_rx_maintain,
 };
