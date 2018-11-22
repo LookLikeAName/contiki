@@ -347,7 +347,7 @@ void self_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int fr
   
   if(link->slotframe_handle == slotframe_handle 
     && (groups[node_group_offset].required_slot -1)>0
-    && link->timeslot == parent_slot_offset_start+(groups[node_group_offset].required_slot-1))
+    && link->timeslot == node_slot_offset_start+(groups[node_group_offset].required_slot-1))
     { 
    if(!packet_receved){
     last_rx_countdown --;
