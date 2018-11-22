@@ -362,7 +362,7 @@ void self_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int fr
    }
    
   }
-
+  PRINTF("self_rx_maintain: %d , %d ,%d \n",last_rx_countdown,packet_receved,frame_valid);
 }
 #endif
 /*---------------------------------------------------------------------------*/
