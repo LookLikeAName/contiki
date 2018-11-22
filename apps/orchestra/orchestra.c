@@ -272,7 +272,7 @@ void
    int i;
    for(i = 0; i < NUM_RULES; i++) {
      if(all_rules[i]->self_rx_maintain != NULL) {
-        all_rules[i]->self_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int frame_valid);
+        all_rules[i]->self_rx_maintain(link,packet_receved,frame_valid);
      }
    }
  }
