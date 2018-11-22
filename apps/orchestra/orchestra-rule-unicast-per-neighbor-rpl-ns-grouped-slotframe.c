@@ -276,7 +276,11 @@ void slot_request_acked(){
   if(orchestra_request_slots_for_root!=0){
     uint16_t parent_group_offset;
     parent_group_offset = get_group_offset(&orchestra_parent_linkaddr);
-    groups[parent_group_offset].required_slot = orchestra_request_slots_for_root;
+    if( groups[parent_group_offset].required_slot != orchestra_request_slots_for_root){ 
+      groups[parent_group_offset].required_slot = orchestra_request_slots_for_root;
+      groups[parent_group_offset].allocate_slot_offset = ORCHESTRA_LINKADDR_HASH(&linkaddr_node_addr) % groups[parent_group_offset].required_slot;
+    }
+    
    // PRINTF("slot_request_acked %d\n", groups[parent_group_offset].required_slot);
   }
 }
