@@ -960,7 +960,7 @@ PT_THREAD(tsch_rx_slot(struct pt *pt, struct rtimer *t))
       tsch_radio_off(TSCH_RADIO_CMD_OFF_END_OF_TIMESLOT);
     }
     #if TSCH_CALLBACK_GROUPED_NESS_CONF
-    //TSCH_CALLBACK_RX_SLOT_MAINTAIN(current_link,packet_seen,frame_valid);
+    TSCH_CALLBACK_RX_SLOT_MAINTAIN(current_link,packet_seen,frame_valid);
     #endif
     if(input_queue_drop != 0) {
       TSCH_LOG_ADD(tsch_log_message,
