@@ -44,7 +44,7 @@
 #include "net/packetbuf.h"
 #include <stdio.h>
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 #define PRINTF(...) printf(__VA_ARGS__)
 #else
@@ -360,7 +360,7 @@ void self_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int fr
    {
     last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
    }
-   printf("self_rx_maintain: %d , %d ,%d \n",last_rx_countdown,packet_receved,frame_valid);
+   PRINTF("self_rx_maintain: %d , %d ,%d \n",last_rx_countdown,packet_receved,frame_valid);
   }
   
 }
