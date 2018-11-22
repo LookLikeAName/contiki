@@ -346,14 +346,14 @@ void self_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int fr
   node_slot_offset_start = node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
   
   if(link->slotframe_handle == slotframe_handle 
-    && (groups[node_group_offset].requested_slots -1)>0
-    && link->timeslot == parent_slot_offset_start+(groups[parent_group_offset].required_slot-1))
+    && (groups[node_group_offset].required_slot -1)>0
+    && link->timeslot == parent_slot_offset_start+(groups[node_group_offset].required_slot-1))
     { 
    if(!packet_receved){
     last_rx_countdown --;
     if(last_rx_countdown == 0){
       last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
-      delete_self_uc_link(groups[node_group_offset].requested_slots -1 );
+      delete_self_uc_link(groups[node_group_offset].required_slot -1 );
     }
    } 
    else if(packet_receved && frame_valid)
