@@ -216,7 +216,7 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
     if(timeslot != NULL) {
       if(is_time_source(dest)){
         *timeslot = get_node_timeslot(dest);
-        int backoff_slots=(groups[get_group_offset(dest)].required_slot-1) > 0 ? ORCHESTRA_LINKADDR_HASH(&linkaddr_node_addr) % (groups[get_group_offset(dest)].required_slot-1) : 1 ;
+        int backoff_slots=(groups[get_group_offset(dest)].required_slot-1) > 0 ? ORCHESTRA_LINKADDR_HASH(&linkaddr_node_addr) % (groups[get_group_offset(dest)].required_slot-1)+1 : 1 ;
         groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+backoff_slots)%groups[get_group_offset(dest)].required_slot;
       }
       else
@@ -351,17 +351,20 @@ void self_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int fr
     { 
    if(!packet_receved){
     last_rx_countdown --;
-    if(last_rx_countdown == 0){
-      last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
-      PRINTF("self_rx_maintain: %d , %d ,%d a\n",last_rx_countdown,packet_receved,frame_valid);
-      delete_self_uc_link(groups[node_group_offset].required_slot -1 );
-    }
    } 
    else if(packet_receved && frame_valid)
    {
     last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
    }
    PRINTF("self_rx_maintain: %d , %d ,%d b\n",last_rx_countdown,packet_receved,frame_valid);
+  }
+  else
+  {
+    if(last_rx_countdown <= 0){
+      last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
+      PRINTF("self_rx_maintain: %d , %d ,%d a\n",last_rx_countdown,packet_receved,frame_valid);
+      delete_self_uc_link(groups[node_group_offset].required_slot -1 );
+    }
   }
   
 }
