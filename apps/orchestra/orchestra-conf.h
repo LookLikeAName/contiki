@@ -91,6 +91,8 @@
 #define ORCHESTRA_GROUPED_UNICAST_PERIOD                  ORCHESTRA_CONF_SLOTFRAME_GROUP_AMOUNT*ORCHESTRA_CONF_SLOTFRAME_GROUP_SIZE
 #endif /* ORCHESTRA_GROUPED_UNICAST_PERIOD */
 
+#define ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD             ((float)ORCHESTRA_CONF_LAST_RX_UNUESD_DELETE_THRESHOLD_SEC/ORCHESTRA_GROUPED_UNICAST_PERIOD)*1000;
+
 /* Is the per-neighbor unicast slotframe sender-based (if not, it is receiver-based).
  * Note: sender-based works only with RPL storing mode as it relies on DAO and
  * routing entries to keep track of children and parents. */

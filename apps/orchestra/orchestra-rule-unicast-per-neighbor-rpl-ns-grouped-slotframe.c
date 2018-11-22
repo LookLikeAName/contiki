@@ -44,7 +44,7 @@
 #include "net/packetbuf.h"
 #include <stdio.h>
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 #define PRINTF(...) printf(__VA_ARGS__)
 #else
@@ -56,6 +56,7 @@ static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
 static struct tsch_slotframe *sf_unicast;
 static uint16_t packet_countdown = 10;
+static uint16_t last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
 
 /*Request slots amount for root 4 bits( 1 ~ 15 ) which actually mean 1~15 slots to allocate,reserved 0 for not sendeing to parent.*/
 uint8_t orchestra_request_slots_for_root=0;
@@ -356,7 +357,7 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
 static void
 init(uint16_t sf_handle)
 {
-  PRINTF("init orchestra non-storing-grouped-slotframe\n");
+  PRINTF("init orchestra non-storing-grouped-slotframe %d\n",last_rx_countdown);
   int i;
   uint16_t rx_timeslot;
   slotframe_handle = sf_handle;
