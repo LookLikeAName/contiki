@@ -354,7 +354,7 @@ void rx_use_count(const struct tsch_link *link,uint8_t packet_receved,int frame_
    {
     last_rx_count ++;
    }
-   PRINTF("self_rx_maintain: %d , %d ,%d b\n",last_rx_countdown,packet_receved,frame_valid);
+   PRINTF("self_rx_maintain: %d , %d ,%d b\n",last_rx_count,packet_receved,frame_valid);
   }
 }
 void rx_maintain_routine(){
@@ -390,7 +390,7 @@ new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new
 static void
 init(uint16_t sf_handle)
 {
-  PRINTF("init orchestra non-storing-grouped-slotframe %d\n",last_rx_countdown);
+  PRINTF("init orchestra non-storing-grouped-slotframe %d\n",last_rx_count);
   int i;
   uint16_t rx_timeslot;
   slotframe_handle = sf_handle;
