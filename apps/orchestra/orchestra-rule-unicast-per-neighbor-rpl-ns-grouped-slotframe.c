@@ -217,7 +217,7 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
       if(is_time_source(dest)){
         *timeslot = get_node_timeslot(dest);
         //int backoff_slots=(groups[get_group_offset(dest)].required_slot-1) > 0 ? ORCHESTRA_LINKADDR_HASH(&linkaddr_node_addr) % (groups[get_group_offset(dest)].required_slot-1)+1 : 1 ;
-        int backoff_slots =  ;
+        int backoff_slots =  1;
         groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+backoff_slots)%groups[get_group_offset(dest)].required_slot;
       }
       else
