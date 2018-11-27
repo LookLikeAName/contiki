@@ -56,7 +56,7 @@ static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
 static struct tsch_slotframe *sf_unicast;
 static uint16_t packet_countdown = 10;
-static uint16_t last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
+static uint16_t last_rx_count = 0 ;
 
 /*Request slots amount for root 4 bits( 1 ~ 15 ) which actually mean 1~15 slots to allocate,reserved 0 for not sendeing to parent.*/
 uint8_t orchestra_request_slots_for_root=0;
@@ -339,7 +339,7 @@ slot_allocate_routine()
 
 
 
-void self_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int frame_valid){
+void rx_use_count(const struct tsch_link *link,uint8_t packet_receved,int frame_valid){
   uint16_t node_slot_offset_start;
   uint16_t node_group_offset;
 
@@ -347,27 +347,26 @@ void self_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int fr
   node_slot_offset_start = node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
   
   if(link->slotframe_handle == slotframe_handle 
-    && (groups[node_group_offset].required_slot -1)>0
     && link->timeslot == node_slot_offset_start+(groups[node_group_offset].required_slot-1))
     { 
-   if(!packet_receved){
-    last_rx_countdown --;
-   } 
-   else if(packet_receved && frame_valid)
+   
+   if(packet_receved && frame_valid)
    {
-    last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
+    last_rx_count ++;
    }
    PRINTF("self_rx_maintain: %d , %d ,%d b\n",last_rx_countdown,packet_receved,frame_valid);
   }
-  else
-  {
-    if(last_rx_countdown <= 0){
-      last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
-      PRINTF("self_rx_maintain: %d , %d ,%d ,%d a\n",last_rx_countdown,packet_receved,frame_valid,link->timeslot);
-      delete_self_uc_link(groups[node_group_offset].required_slot -1 );
-    }
-  }
+}
+void rx_maintain_routine(){
   
+  uint16_t node_group_offset;
+
+  node_group_offset =get_group_offset(&linkaddr_node_addr);
+  PRINTF("rx_maintain_routine: %d \n",last_rx_count);
+  if((groups[node_group_offset].required_slot -1)>0 && last_rx_count == 0 ){
+    delete_self_uc_link(groups[node_group_offset].required_slot -1 );
+  }
+  last_rx_countdown = 0;
 }
 #endif
 /*---------------------------------------------------------------------------*/
@@ -427,5 +426,6 @@ struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe = {
   get_request_slots_for_root,
   set_requested_slots_frome_child,
   slot_allocate_routine,
-  self_rx_maintain,
+  rx_use_count,
+  rx_maintain_routine,
 };

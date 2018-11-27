@@ -270,12 +270,12 @@ void
  }
 
  void
- orchestra_callback_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int frame_valid) 
+ orchestra_callback_rx_use_count(const struct tsch_link *link,uint8_t packet_receved,int frame_valid) 
  {
    int i;
    for(i = 0; i < NUM_RULES; i++) {
-     if(all_rules[i]->self_rx_maintain != NULL) {
-        all_rules[i]->self_rx_maintain(link,packet_receved,frame_valid);
+     if(all_rules[i]->rx_use_count != NULL) {
+        all_rules[i]->rx_use_count(link,packet_receved,frame_valid);
      }
    }
  }
@@ -289,11 +289,16 @@ PROCESS_THREAD(orchestra_process, ev, data)
   PROCESS_BEGIN();
   
   //etimer_set(&etaa, CLOCK_SECOND * 60);
-  etimer_set(&etaa, CLOCK_SECOND * 10);
+  etimer_set(&etaa, CLOCK_SECOND * ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD);
   while(1) {
     PROCESS_YIELD_UNTIL(etimer_expired(&etaa));
     etimer_reset(&etaa);
-    PRINTF("orchestra_process\n");
+    int i;
+    for(i = 0; i < NUM_RULES; i++) {
+      if(all_rules[i]->rx_maintain_routine != NULL) {
+         all_rules[i]->rx_maintain_routine(link,packet_receved,frame_valid);
+      }
+    }
   }
 
   PROCESS_END();
