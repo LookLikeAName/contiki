@@ -182,7 +182,7 @@ void
 /*---------------------------------------------------------------------------*/
  #if TSCH_CALLBACK_GROUPED_NESS_CONF
  PROCESS(orchestra_process, "orchestra_process");
-// AUTOSTART_PROCESSES(&orchestra_process);
+
 
  int
  orchestra_callback_is_slot_for_parent(const struct tsch_link *link)
@@ -317,4 +317,5 @@ orchestra_init(void)
     }
   }
   PRINTF("Orchestra: initialization done\n");
+  process_start(&orchestra_process, NULL);
 }
