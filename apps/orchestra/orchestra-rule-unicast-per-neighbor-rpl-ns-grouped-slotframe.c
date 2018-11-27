@@ -125,7 +125,7 @@ static void
 delete_self_uc_link(uint8_t requested_slots)
 {
 
-  
+  struct tsch_link *l;
   uint16_t node_group_offset;
   uint16_t delete_slot_offset;
   int i;
@@ -136,11 +136,11 @@ delete_self_uc_link(uint8_t requested_slots)
   /* update link */
     for(i = 0; i < delete_count; i++) {
 
-      tsch_schedule_add_link(sf_unicast,
+      l =  tsch_schedule_add_link(sf_unicast,
         LINK_OPTION_SHARED | LINK_OPTION_TX,
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         delete_slot_offset, channel_offset);
-        PRINTF("delete link loop: %d %d\n",i,delete_slot_offset);  
+        PRINTF("delete link loop: %d %d %d\n",i,delete_slot_offset,l==NULL?0:l->link_options);  
       delete_slot_offset--;
     }
     groups[node_group_offset].required_slot=requested_slots;
@@ -216,7 +216,8 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
     if(timeslot != NULL) {
       if(is_time_source(dest)){
         *timeslot = get_node_timeslot(dest);
-        int backoff_slots=(groups[get_group_offset(dest)].required_slot-1) > 0 ? ORCHESTRA_LINKADDR_HASH(&linkaddr_node_addr) % (groups[get_group_offset(dest)].required_slot-1)+1 : 1 ;
+        //int backoff_slots=(groups[get_group_offset(dest)].required_slot-1) > 0 ? ORCHESTRA_LINKADDR_HASH(&linkaddr_node_addr) % (groups[get_group_offset(dest)].required_slot-1)+1 : 1 ;
+        int backoff_slots =  ;
         groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+backoff_slots)%groups[get_group_offset(dest)].required_slot;
       }
       else
@@ -362,7 +363,7 @@ void self_rx_maintain(const struct tsch_link *link,uint8_t packet_receved,int fr
   {
     if(last_rx_countdown <= 0){
       last_rx_countdown = ORCHESTRA_LAST_RX_UNUESD_DELETE_THRESHOLD;
-      PRINTF("self_rx_maintain: %d , %d ,%d a\n",last_rx_countdown,packet_receved,frame_valid);
+      PRINTF("self_rx_maintain: %d , %d ,%d ,%d a\n",last_rx_countdown,packet_receved,frame_valid,link->timeslot);
       delete_self_uc_link(groups[node_group_offset].required_slot -1 );
     }
   }
