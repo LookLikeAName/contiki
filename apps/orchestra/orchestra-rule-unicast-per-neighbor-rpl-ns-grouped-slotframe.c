@@ -44,7 +44,7 @@
 #include "net/packetbuf.h"
 #include <stdio.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #if DEBUG
 #define PRINTF(...) printf(__VA_ARGS__)
 #else
@@ -357,6 +357,7 @@ void rx_use_count(const struct tsch_link *link,uint8_t packet_receved,int frame_
    PRINTF("self_rx_maintain: %d , %d ,%d b\n",last_rx_count,packet_receved,frame_valid);
   }
 }
+
 void rx_maintain_routine(){
   
   uint16_t node_group_offset;
