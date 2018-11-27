@@ -366,7 +366,7 @@ void rx_maintain_routine(){
   if((groups[node_group_offset].required_slot -1)>0 && last_rx_count == 0 ){
     delete_self_uc_link(groups[node_group_offset].required_slot -1 );
   }
-  last_rx_countdown = 0;
+  last_rx_count = 0;
 }
 #endif
 /*---------------------------------------------------------------------------*/
