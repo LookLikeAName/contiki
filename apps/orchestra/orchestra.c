@@ -181,6 +181,9 @@ void
  #endif
 /*---------------------------------------------------------------------------*/
  #if TSCH_CALLBACK_GROUPED_NESS_CONF
+ PROCESS(orchestra_process, "orchestra_process");
+// AUTOSTART_PROCESSES(&orchestra_process);
+
  int
  orchestra_callback_is_slot_for_parent(const struct tsch_link *link)
  {
@@ -276,6 +279,26 @@ void
      }
    }
  }
+
+ 
+PROCESS_THREAD(orchestra_process, ev, data)
+{
+  static struct etimer etaa;
+  
+
+  PROCESS_BEGIN();
+  
+  //etimer_set(&etaa, CLOCK_SECOND * 60);
+  etimer_set(&etaa, CLOCK_SECOND * 10);
+  while(1) {
+    PROCESS_YIELD_UNTIL(etimer_expired(&etaa));
+    etimer_reset(&etaa);
+    PRINTF("orchestra_process\n");
+  }
+
+  PROCESS_END();
+}
+
  #endif
 /*---------------------------------------------------------------------------*/
 void
