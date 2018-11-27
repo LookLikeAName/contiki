@@ -296,7 +296,7 @@ PROCESS_THREAD(orchestra_process, ev, data)
     int i;
     for(i = 0; i < NUM_RULES; i++) {
       if(all_rules[i]->rx_maintain_routine != NULL) {
-         all_rules[i]->rx_maintain_routine(link,packet_receved,frame_valid);
+         all_rules[i]->rx_maintain_routine();
       }
     }
   }
