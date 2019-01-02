@@ -51,6 +51,7 @@
 #define PRINTF(...)
 #endif
 
+#define UNICAST_SLOTFRAME_ID 0
 
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
@@ -146,6 +147,19 @@ delete_self_uc_link(uint8_t requested_slots)
     groups[node_group_offset].required_slot=requested_slots;
 }
 /*---------------------------------------------------------------------------*/
+int is_for_this_slotframe(){
+#if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE
+  const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
+  int dest_slotframe_id = ((int)ORCHESTRA_LINKADDR_HASH(dest)/ORCHESTRA_SLOTFRAME_GROUP_AMOUNT)%2;
+  if(dest_slotframe_id == UNICAST_SLOTFRAME_ID){
+    return 1;
+  }
+  return 0;
+ #else
+  return 1;
+ #endif
+}
+/*---------------------------------------------------------------------------*/
 static int
 is_time_source(const linkaddr_t *linkaddr)
 {
@@ -178,7 +192,8 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
   
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
-     && !linkaddr_cmp(dest, &linkaddr_null)) {
+     && !linkaddr_cmp(dest, &linkaddr_null)
+     && is_for_this_slotframe()) {
       PRINTF("group slotframe \n");
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
@@ -209,7 +224,8 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
   if(((((uint8_t *)(queuebuf_dataptr(buf)))[0]) & 7) == FRAME802154_DATAFRAME
-     && !linkaddr_cmp(dest, &linkaddr_null)) {
+     && !linkaddr_cmp(dest, &linkaddr_null)
+     && is_for_this_slotframe()) {
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }
@@ -238,7 +254,7 @@ int is_slot_for_parent(const struct tsch_link *link){
   uint16_t parent_slot_offset_start;
   uint16_t parent_group_offset;
 
-  parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
+  parent_group_offset = get_group_offset(&orchestra_parent_linkaddr);
   parent_slot_offset_start = parent_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
   
   if(link->slotframe_handle == slotframe_handle){ 
@@ -304,11 +320,10 @@ set_requested_slots_frome_child(uint8_t requested_slots_frome_child)
   orchestra_requested_slots_from_child = requested_slots_frome_child;
  /// PRINTF("set_requested_slots_frome_child: %02x, %d \n",requested_slots_frome_child,orchestra_requested_slots_from_child);
 }
-
+//////---------------------------------------------------------------//////
 void
 slot_allocate_routine()
 {
- 
   uint16_t node_group_offset;
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
@@ -316,7 +331,6 @@ slot_allocate_routine()
    if(orchestra_requested_slots_from_child > groups[node_group_offset].required_slot){
       packet_countdown = 10;
       add_self_uc_link(orchestra_requested_slots_from_child);
-      
     }
     else if(orchestra_requested_slots_from_child == groups[node_group_offset].required_slot)
     {
@@ -328,11 +342,9 @@ slot_allocate_routine()
       if(packet_countdown == 0){
         packet_countdown = 10;
         delete_self_uc_link(orchestra_requested_slots_from_child);
-        
       }
     }
   }
-  
   PRINTF("groups[node_group_offset].required_slot: %02x , %d ,count down %d\n",groups[node_group_offset].required_slot,orchestra_requested_slots_from_child,packet_countdown);
   orchestra_requested_slots_from_child=0;
 }
@@ -370,6 +382,7 @@ void rx_maintain_routine(){
   last_rx_count = 0;
 }
 #endif
+//////---------------------------------------------------------------//////
 /*---------------------------------------------------------------------------*/
 static void
 new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)

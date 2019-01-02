@@ -53,6 +53,8 @@
 //#define ORCHESTRA_RULES { &eb_per_time_source,&unicast_per_neighbor_rpl_ns_grouped_slotframe, &default_common }
 #endif /* ORCHESTRA_CONF_RULES */
 
+
+
 /* Length of the various slotframes. Tune to balance network capacity,
  * contention, energy, latency. */
 #ifdef ORCHESTRA_CONF_EBSF_PERIOD
@@ -122,5 +124,8 @@
 #else /* ORCHESTRA_CONF_COLLISION_FREE_HASH */
 #define ORCHESTRA_COLLISION_FREE_HASH             0 /* Set to 1 if ORCHESTRA_LINKADDR_HASH returns unique hashes */
 #endif /* ORCHESTRA_CONF_COLLISION_FREE_HASH */
+
+/*Do we use multi channel for grouped orchestra*/
+#define ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE 0
 
 #endif /* __ORCHESTRA_CONF_H__ */
