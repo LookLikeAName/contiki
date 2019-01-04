@@ -79,13 +79,6 @@ int group_handler_is_time_source(const linkaddr_t *linkaddr)
     return 0;
 }
 /*----------------------------------------------------------------------*/
-void group_handler_set_requested_slots_frome_child(uint8_t requested_slots_frome_child){
-
-    orchestra_requested_slots_from_child = requested_slots_frome_child;
-
-}
-
-/*----------------------------------------------------------------------*/
 int group_handler_is_packet_for_parent(struct queuebuf *buf){
     
     const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
