@@ -33,7 +33,7 @@ get_group_offset(const linkaddr_t *addr)
 /*----------------------------------------------------------------------*/
 void group_handler_init()
 {
-
+    int i;
     /*Initial groups attribute*/
     for (i = 0; i < ORCHESTRA_SLOTFRAME_GROUP_AMOUNT; i++)
     {
