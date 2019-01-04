@@ -38,7 +38,7 @@
 
 #include "contiki.h"
 #include "orchestra.h"
-#include "orchestra-grouped-handler-0.h"
+#include "orchestra-grouped-handler.h"
 #include "net/packetbuf.h"
 #include "net/ipv6/uip-icmp6.h"
 #include "net/rpl/rpl-private.h"
@@ -148,7 +148,7 @@ orchestra_callback_new_time_source(const struct tsch_neighbor *old, const struct
   if(new != old) {
     orchestra_parent_knows_us = 0;
   }
-  group_handler_new_time_source(old, new);
+  group_handler_new_time_source0(old, new);
   for(i = 0; i < NUM_RULES; i++) {
     if(all_rules[i]->new_time_source != NULL) {
       all_rules[i]->new_time_source(old, new);
