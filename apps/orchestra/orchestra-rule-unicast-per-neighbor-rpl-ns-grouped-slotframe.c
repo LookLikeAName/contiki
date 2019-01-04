@@ -287,7 +287,7 @@ int is_slot_for_parent(const struct tsch_link *link){
   if(link->slotframe_handle == slotframe_handle){ 
     
       if(parent_slot_offset_start <= link->timeslot &&
-         link->timeslot <  parent_slot_offset_start+groups[parent_group_offset].required_slot)
+         link->timeslot <  parent_slot_offset_start+group_handler_get_slot_required_slot(parent_group_offset))
         {
          // PRINTF("link for parent :%d %d %d %d\n",link->slotframe_handle,link->timeslot,parent_slot_offset_start,groups[group_offset].required_slot);
           return 1;
