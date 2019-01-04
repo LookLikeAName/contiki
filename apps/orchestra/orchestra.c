@@ -190,7 +190,15 @@ void
  orchestra_callback_is_slot_for_parent(const struct tsch_link *link)
  {
   
-  return group_handler_is_slot_for_parent(link);
+  int i;
+  for(i = 0; i < NUM_RULES; i++) {
+    if(all_rules[i]->slot_allocate_routine != NULL) {
+       if(all_rules[i]->is_slot_for_parent(link)){
+         return 1;
+       }
+    }
+  }
+  return 0;
  }
 
  int

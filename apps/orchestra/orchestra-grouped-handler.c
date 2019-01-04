@@ -6,8 +6,6 @@
 uint8_t orchestra_request_slots_for_root=0;
 uint8_t orchestra_requested_slots_from_child=0;
 
-static uint16_t packet_countdown = 10;
-
 struct group_attribute_s{
     uint16_t required_slot;
     uint16_t allocate_slot_offset;
@@ -81,44 +79,12 @@ int group_handler_is_time_source(const linkaddr_t *linkaddr)
     return 0;
 }
 /*----------------------------------------------------------------------*/
-uint8_t group_handler_get_request_slots_for_root(linkaddr_t *dest)
-{
-    /* Select data packets we have a unicast link to */
-    //  PRINTF("get_request_slots_for_root %d ,%d\n", orchestra_request_slots_for_root,group_handler_is_time_source(dest));
-    if (!linkaddr_cmp(dest, &linkaddr_null) && group_handler_is_time_source(dest))
-    {
-        PRINTF("get_request_slots_for_root is parent %d\n", orchestra_request_slots_for_root);
-        return orchestra_request_slots_for_root;
-    }
-    return 0;
-}
-
-/*----------------------------------------------------------------------*/
 void group_handler_set_requested_slots_frome_child(uint8_t requested_slots_frome_child){
 
     orchestra_requested_slots_from_child = requested_slots_frome_child;
 
 }
 
-/*----------------------------------------------------------------------*/
-int group_handler_is_slot_for_parent(const struct tsch_link *link){
-    uint16_t parent_slot_offset_start;
-    uint16_t parent_group_offset;
-  
-    parent_group_offset = get_group_offset(&orchestra_parent_linkaddr);
-    parent_slot_offset_start = parent_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
-    
-    if(link->slotframe_handle == slotframe_handle){ 
-      
-        if(parent_slot_offset_start <= link->timeslot &&
-           link->timeslot <  parent_slot_offset_start+groups[parent_group_offset].required_slot)
-          {
-           // PRINTF("link for parent :%d %d %d %d\n",link->slotframe_handle,link->timeslot,parent_slot_offset_start,groups[group_offset].required_slot);
-            return 1;
-          }
-    }
-    return 0;
-}
 /*----------------------------------------------------------------------*/
 int group_handler_is_packet_for_parent(struct queuebuf *buf){
     

@@ -55,6 +55,7 @@ struct orchestra_rule {
   #endif
   #if TSCH_CALLBACK_GROUPED_NESS_CONF
   void (*slot_allocate_routine)();
+  int (*is_slot_for_parent)(const struct tsch_link *link);
   void (*rx_use_count)(const struct tsch_link *link,uint8_t packet_receved,int frame_valid);
   void (*rx_maintain_routine)();
   #endif
