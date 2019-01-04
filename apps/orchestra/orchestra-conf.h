@@ -127,5 +127,6 @@
 
 /*Do we use multi channel for grouped orchestra*/
 #define ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE 0
+#define ORCHESTRA_GROUPED_MULTICHANNEL_NUMBER 1
 
 #endif /* __ORCHESTRA_CONF_H__ */

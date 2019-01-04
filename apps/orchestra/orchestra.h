@@ -54,12 +54,6 @@ struct orchestra_rule {
   int (* packet_noack)(uint16_t *slotframe, uint16_t *timeslot,struct queuebuf *buf);
   #endif
   #if TSCH_CALLBACK_GROUPED_NESS_CONF
-  int (* is_slot_for_parent)(const struct tsch_link *link);
-  int (* is_packet_for_parent)(struct queuebuf *buf);
-  void (*request_slot_routine)(uint16_t used_slot);
-  void (*slot_request_acked)();
-  uint8_t (*get_request_slots_for_root)(linkaddr_t *dest);
-  void (*set_requested_slots_from_child)(uint8_t requested_slots_frome_child);
   void (*slot_allocate_routine)();
   void (*rx_use_count)(const struct tsch_link *link,uint8_t packet_receved,int frame_valid);
   void (*rx_maintain_routine)();

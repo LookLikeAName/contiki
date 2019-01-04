@@ -40,6 +40,7 @@
 
 #include "contiki.h"
 #include "orchestra.h"
+#include "orchestra-grouped-handler.h"
 #include "net/ip/uip.h"
 #include "net/packetbuf.h"
 #include <stdio.h>
@@ -55,22 +56,12 @@
 
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
+
 static struct tsch_slotframe *sf_unicast;
+
 static uint16_t packet_countdown = 10;
 static uint16_t last_rx_count = 0 ;
 
-/*Request slots amount for root 4 bits( 1 ~ 15 ) which actually mean 1~15 slots to allocate,reserved 0 for not sendeing to parent.*/
-uint8_t orchestra_request_slots_for_root=0;
-uint8_t orchestra_requested_slots_from_child=0;
-
-struct group_attribute_s{
-  uint16_t required_slot;
-  uint16_t allocate_slot_offset;
-}group_attribute_default={1,0};
-
-typedef struct group_attribute_s group_attribute;
-
-group_attribute groups[ORCHESTRA_SLOTFRAME_GROUP_AMOUNT];
 
 /*---------------------------------------------------------------------------*/
 uint16_t
@@ -92,7 +83,7 @@ get_node_timeslot(const linkaddr_t *addr)
     if(group_offset==0xffff){
       return 0xffff;
     }
-    return group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[group_offset].allocate_slot_offset;
+    return group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+group_handler_get_allocate_slot_offset(group_offset);
   } else {
     return 0xffff;
   }
@@ -106,8 +97,8 @@ add_self_uc_link(uint8_t requested_slots)
   uint16_t add_first_slot_offset;
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
-  int add_count = requested_slots-groups[node_group_offset].required_slot;
-  add_first_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
+  int add_count = requested_slots-group_handler_get_slot_required_slot(node_group_offset);
+  add_first_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+group_handler_get_slot_required_slot(node_group_offset)-1;
   PRINTF("add link: %d %d %d\n",add_count,add_first_slot_offset,requested_slots);  
   /* Add/update link */
     for(i = 0; i < add_count; i++) {
@@ -119,7 +110,7 @@ add_self_uc_link(uint8_t requested_slots)
       PRINTF("add link loop: %d %d %d\n",i,add_first_slot_offset,l==NULL?0:l->link_options);  
       
     }
-    groups[node_group_offset].required_slot = requested_slots;
+    group_handler_set_slot_required_slot(node_group_offset,requested_slots);
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -131,8 +122,8 @@ delete_self_uc_link(uint8_t requested_slots)
   uint16_t delete_slot_offset;
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
-  int delete_count = groups[node_group_offset].required_slot - requested_slots;
-  delete_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+groups[node_group_offset].required_slot-1;
+  int delete_count = group_handler_get_slot_required_slot(node_group_offset) - requested_slots;
+  delete_slot_offset=node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE+ group_handler_get_slot_required_slot(node_group_offset)-1;
   PRINTF("delete link: %d %d\n",delete_count,delete_slot_offset);  
   /* update link */
     for(i = 0; i < delete_count; i++) {
@@ -144,13 +135,12 @@ delete_self_uc_link(uint8_t requested_slots)
         PRINTF("delete link loop: %d %d %d\n",i,delete_slot_offset,l==NULL?0:l->link_options);  
       delete_slot_offset--;
     }
-    groups[node_group_offset].required_slot=requested_slots;
+    group_handler_set_slot_required_slot(node_group_offset,requested_slots);
 }
 /*---------------------------------------------------------------------------*/
-int is_for_this_slotframe(){
+int is_for_this_slotframe(const linkaddr_t *linkaddr){
 #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE
-  const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
-  int dest_slotframe_id = ((int)ORCHESTRA_LINKADDR_HASH(dest)/ORCHESTRA_SLOTFRAME_GROUP_AMOUNT)%2;
+  int dest_slotframe_id = ((int)ORCHESTRA_LINKADDR_HASH(linkaddr)/ORCHESTRA_SLOTFRAME_GROUP_AMOUNT)%ORCHESTRA_GROUPED_MULTICHANNEL_NUMBER;
   if(dest_slotframe_id == UNICAST_SLOTFRAME_ID){
     return 1;
   }
@@ -190,10 +180,11 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
 {
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
-  
+  uint16_t dest_group_offset = get_group_offset(dest);
+
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null)
-     && is_for_this_slotframe()) {
+     && is_for_this_slotframe(dest)) {
       PRINTF("group slotframe \n");
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
@@ -201,11 +192,11 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
     if(timeslot != NULL) {
       if(is_time_source(dest)){
         *timeslot = get_node_timeslot(dest);
-        groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+1)%groups[get_group_offset(dest)].required_slot;
+        group_handler_set_allocate_slot_offset(dest_group_offset,(group_handler_get_allocate_slot_offset(dest_group_offset)+1)%group_handler_get_slot_required_slot(dest_group_offset));
       }
       else
       {
-        *timeslot = get_node_timeslot(dest)-groups[get_group_offset(dest)].allocate_slot_offset;
+        *timeslot = get_node_timeslot(dest)-group_handler_get_allocate_slot_offset(dest_group_offset);
       }
     }
     //PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x\n",*slotframe,*timeslot);
@@ -223,9 +214,11 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
    // PRINTF("orchestra NOACK\n");
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
+  uint16_t dest_group_offset = get_group_offset(dest);
+
   if(((((uint8_t *)(queuebuf_dataptr(buf)))[0]) & 7) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null)
-     && is_for_this_slotframe()) {
+     && is_for_this_slotframe(dest)) {
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }
@@ -234,11 +227,12 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
         *timeslot = get_node_timeslot(dest);
         //int backoff_slots=(groups[get_group_offset(dest)].required_slot-1) > 0 ? ORCHESTRA_LINKADDR_HASH(&linkaddr_node_addr) % (groups[get_group_offset(dest)].required_slot-1)+1 : 1 ;
         int backoff_slots =  1;
-        groups[get_group_offset(dest)].allocate_slot_offset=(groups[get_group_offset(dest)].allocate_slot_offset+backoff_slots)%groups[get_group_offset(dest)].required_slot;
+  
+        group_handler_set_allocate_slot_offset(dest_group_offset,(group_handler_get_allocate_slot_offset(dest_group_offset)+backoff_slots)%group_handler_get_slot_required_slot(dest_group_offset));
       }
       else
       {
-        *timeslot = get_node_timeslot(dest)-groups[get_group_offset(dest)].allocate_slot_offset;
+        *timeslot = get_node_timeslot(dest)-group_handler_get_allocate_slot_offset(dest_group_offset);
       }
     }
     //PRINTF("orchestra NOACK true\n");
@@ -250,89 +244,21 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
 #endif
 /*---------------------------------------------------------------------------*/
 #if TSCH_CALLBACK_GROUPED_NESS_CONF
-int is_slot_for_parent(const struct tsch_link *link){
-  uint16_t parent_slot_offset_start;
-  uint16_t parent_group_offset;
-
-  parent_group_offset = get_group_offset(&orchestra_parent_linkaddr);
-  parent_slot_offset_start = parent_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
-  
-  if(link->slotframe_handle == slotframe_handle){ 
-    
-      if(parent_slot_offset_start <= link->timeslot &&
-         link->timeslot <  parent_slot_offset_start+groups[parent_group_offset].required_slot)
-        {
-         // PRINTF("link for parent :%d %d %d %d\n",link->slotframe_handle,link->timeslot,parent_slot_offset_start,groups[group_offset].required_slot);
-          return 1;
-        }
-  }
-  return 0;
-}
-
-int is_packet_for_parent(struct queuebuf *buf){
-  //PRINTF("is_packet_for_parent \n");
-  const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
-  return is_time_source(dest);
-}
-
-void request_slot_routine(uint16_t used_slot){
-  uint16_t parent_group_offset;
-  parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
-  if(used_slot>ADD_THRESHOLD)
-  {
-    orchestra_request_slots_for_root = groups[parent_group_offset].required_slot+1 > ORCHESTRA_SLOTFRAME_GROUP_SIZE ? ORCHESTRA_SLOTFRAME_GROUP_SIZE : groups[parent_group_offset].required_slot+1;
-    PRINTF("ADD_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
-  }
-  else if(used_slot<DELETE_THRESHOLD)
-  {
-    orchestra_request_slots_for_root = ((groups[parent_group_offset].required_slot-1) < 1) ? 1 : groups[parent_group_offset].required_slot-1;
-    PRINTF("DELETE_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
-  }
-  PRINTF("request_slot_routine %d , used %d\n",orchestra_request_slots_for_root,used_slot);
-}
-
-void slot_request_acked(){
-  if(orchestra_request_slots_for_root!=0){
-    uint16_t parent_group_offset;
-    parent_group_offset = get_group_offset(&orchestra_parent_linkaddr);
-    if( groups[parent_group_offset].required_slot != orchestra_request_slots_for_root){ 
-      groups[parent_group_offset].required_slot = orchestra_request_slots_for_root;
-    }
-   // PRINTF("slot_request_acked %d\n", groups[parent_group_offset].required_slot);
-  }
-}
-
-uint8_t
-get_request_slots_for_root(linkaddr_t *dest)
-{
-  /* Select data packets we have a unicast link to */
-//  PRINTF("get_request_slots_for_root %d ,%d\n", orchestra_request_slots_for_root,is_time_source(dest));
-  if(!linkaddr_cmp(dest, &linkaddr_null) && is_time_source(dest)) {
-      PRINTF("get_request_slots_for_root is parent %d\n", orchestra_request_slots_for_root);
-    return orchestra_request_slots_for_root;
-  }
-  return 0;
-}
-
-void
-set_requested_slots_frome_child(uint8_t requested_slots_frome_child)
-{
-  orchestra_requested_slots_from_child = requested_slots_frome_child;
- /// PRINTF("set_requested_slots_frome_child: %02x, %d \n",requested_slots_frome_child,orchestra_requested_slots_from_child);
-}
-//////---------------------------------------------------------------//////
 void
 slot_allocate_routine()
 {
   uint16_t node_group_offset;
   int i;
   node_group_offset=get_group_offset(&linkaddr_node_addr);
-  if(orchestra_requested_slots_from_child<=ORCHESTRA_SLOTFRAME_GROUP_SIZE && orchestra_requested_slots_from_child > 0){
-   if(orchestra_requested_slots_from_child > groups[node_group_offset].required_slot){
+  uint8_t requested_slots_from_child = group_handler_get_requested_slots_frome_child();
+
+  if(is_for_this_slotframe(&linkaddr_node_addr)){
+  if(requested_slots_from_child<=ORCHESTRA_SLOTFRAME_GROUP_SIZE && requested_slots_from_child > 0){
+   if(requested_slots_from_child > group_handler_get_slot_required_slot(node_group_offset)){
       packet_countdown = 10;
-      add_self_uc_link(orchestra_requested_slots_from_child);
+      add_self_uc_link(requested_slots_from_child);
     }
-    else if(orchestra_requested_slots_from_child == groups[node_group_offset].required_slot)
+    else if(requested_slots_from_child == group_handler_get_slot_required_slot(node_group_offset))
     {
       packet_countdown = 10;
     }
@@ -341,12 +267,13 @@ slot_allocate_routine()
       packet_countdown--;
       if(packet_countdown == 0){
         packet_countdown = 10;
-        delete_self_uc_link(orchestra_requested_slots_from_child);
+        delete_self_uc_link(requested_slots_from_child);
       }
     }
   }
-  PRINTF("groups[node_group_offset].required_slot: %02x , %d ,count down %d\n",groups[node_group_offset].required_slot,orchestra_requested_slots_from_child,packet_countdown);
-  orchestra_requested_slots_from_child=0;
+  PRINTF("groups[node_group_offset].required_slot: %02x , %d ,count down %d\n",group_handler_get_slot_required_slot(node_group_offset),requested_slots_from_child,packet_countdown);
+  group_handler_set_requested_slots_frome_child(0);
+}
 }
 
 
@@ -359,7 +286,7 @@ void rx_use_count(const struct tsch_link *link,uint8_t packet_receved,int frame_
   node_slot_offset_start = node_group_offset*ORCHESTRA_SLOTFRAME_GROUP_SIZE;
   
   if(link->slotframe_handle == slotframe_handle 
-    && link->timeslot == node_slot_offset_start+(groups[node_group_offset].required_slot-1))
+    && link->timeslot == node_slot_offset_start+(group_handler_get_slot_required_slot(node_group_offset)-1))
     { 
    
    if(packet_receved && frame_valid)
@@ -376,29 +303,17 @@ void rx_maintain_routine(){
 
   node_group_offset =get_group_offset(&linkaddr_node_addr);
   PRINTF("rx_maintain_routine: %d \n",last_rx_count);
-  if((groups[node_group_offset].required_slot -1)>0 && last_rx_count == 0 ){
-    delete_self_uc_link(groups[node_group_offset].required_slot -1 );
+  if((group_handler_get_slot_required_slot(node_group_offset) -1)>0 && last_rx_count == 0 ){
+    delete_self_uc_link(group_handler_get_slot_required_slot(node_group_offset) -1 );
   }
   last_rx_count = 0;
 }
 #endif
-//////---------------------------------------------------------------//////
 /*---------------------------------------------------------------------------*/
 static void
 new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
 {
-  if(new != old) {
-    const linkaddr_t *old_addr = old != NULL ? &old->addr : NULL;
-    const linkaddr_t *new_addr = new != NULL ? &new->addr : NULL;
-    if(old_addr!= NULL){
-      groups[get_group_offset(old_addr)]=group_attribute_default;
-    }
-    if(new_addr != NULL) {
-      linkaddr_copy(&orchestra_parent_linkaddr, new_addr);
-    } else {
-      linkaddr_copy(&orchestra_parent_linkaddr, &linkaddr_null);
-    }
-  }
+
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -410,17 +325,13 @@ init(uint16_t sf_handle)
   slotframe_handle = sf_handle;
   channel_offset = sf_handle;
 
-  /*Initial groups attribute*/
-  for(i=0;i<ORCHESTRA_SLOTFRAME_GROUP_AMOUNT;i++){
-    groups[i]=group_attribute_default;
-  }
   /* Slotframe for unicast transmissions */
   sf_unicast = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_GROUPED_UNICAST_PERIOD);
   rx_timeslot = get_node_timeslot(&linkaddr_node_addr);
   /* Add a Tx link at each available timeslot. Make the link Rx at our own timeslot. */
   for(i = 0; i < ORCHESTRA_GROUPED_UNICAST_PERIOD; i++) {
     tsch_schedule_add_link(sf_unicast,
-        LINK_OPTION_SHARED | LINK_OPTION_TX | (((i >= rx_timeslot) && (i < rx_timeslot+group_attribute_default.required_slot)) ? LINK_OPTION_RX : 0 ),
+        LINK_OPTION_SHARED | LINK_OPTION_TX | (((i >= rx_timeslot) && (i < rx_timeslot+group_attribute_default.required_slot) && is_for_this_slotframe(&linkaddr_node_addr)) ? LINK_OPTION_RX : 0 ),
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         i, channel_offset);
   }
@@ -433,12 +344,6 @@ struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe = {
   child_added,
   child_removed,
   packet_noack,
-  is_slot_for_parent,
-  is_packet_for_parent,
-  request_slot_routine,
-  slot_request_acked,
-  get_request_slots_for_root,
-  set_requested_slots_frome_child,
   slot_allocate_routine,
   rx_use_count,
   rx_maintain_routine,

@@ -38,6 +38,7 @@
 
 #include "contiki.h"
 #include "orchestra.h"
+#include "orchestra-grouped-handler.h"
 #include "net/packetbuf.h"
 #include "net/ipv6/uip-icmp6.h"
 #include "net/rpl/rpl-private.h"
@@ -147,6 +148,7 @@ orchestra_callback_new_time_source(const struct tsch_neighbor *old, const struct
   if(new != old) {
     orchestra_parent_knows_us = 0;
   }
+  group_handler_new_time_source(old, new);
   for(i = 0; i < NUM_RULES; i++) {
     if(all_rules[i]->new_time_source != NULL) {
       all_rules[i]->new_time_source(old, new);
@@ -188,74 +190,38 @@ void
  orchestra_callback_is_slot_for_parent(const struct tsch_link *link)
  {
   
-   int i;
-   for(i = 0; i < NUM_RULES; i++) {
-     if(all_rules[i]->is_slot_for_parent != NULL) {
-        if(all_rules[i]->is_slot_for_parent(link)){
-          return 1;
-        }
-     }
-   }
-   return 0;
+  return group_handler_is_slot_for_parent(link);
  }
 
  int
  orchestra_callback_is_packet_for_parent(struct queuebuf *buf)
  {
   
-   int i;
-   for(i = 0; i < NUM_RULES; i++) {
-     if(all_rules[i]->is_packet_for_parent != NULL) {
-        if(all_rules[i]->is_packet_for_parent(buf)){
-          return 1;
-        }
-     }
-   }
-   return 0;
+   return group_handler_is_packet_for_parent(buf);
  }
  
  void
  orchestra_callback_request_slot_routine(uint16_t used_slot)
  {
-   int i;
-   for(i = 0; i < NUM_RULES; i++) {
-     if(all_rules[i]->request_slot_routine != NULL) {
-        all_rules[i]->request_slot_routine(used_slot);
-     }
-   }
+   group_handler_request_slot_routine(used_slot);
  }
 
  void
  orchestra_callback_slot_request_acked()
  {
-   int i;
-   for(i = 0; i < NUM_RULES; i++) {
-     if(all_rules[i]->slot_request_acked != NULL) {
-        all_rules[i]->slot_request_acked();
-     }
-   }
+  group_handler_slot_request_acked();
  }
 
  uint8_t
  orchestra_callback_get_request_slots_for_root(linkaddr_t *dest)
  {
-   int i;
-   for(i = 0; i < NUM_RULES; i++) {
-     if(all_rules[i]->get_request_slots_for_root != NULL) {
-        return all_rules[i]->get_request_slots_for_root(dest);
-     }
-   }
+    return group_handler_get_request_slots_for_root(dest);
  }
 
  void
  orchestra_callback_set_requested_slots_from_child(uint16_t requested_slots_frome_child)
  {
-   int i;
-   for(i = 0; i < NUM_RULES; i++) {
-     if(all_rules[i]->set_requested_slots_from_child != NULL) {
-        all_rules[i]->set_requested_slots_from_child(requested_slots_frome_child);
-     }
-   }
+   group_handler_set_requested_slots_frome_child(requested_slots_frome_child);
  }
 
  void
@@ -314,6 +280,8 @@ orchestra_init(void)
    * (i.e. has ACKed at one of our DAOs since we decided to use it as a parent) */
   rime_sniffer_add(&orchestra_sniffer);
   linkaddr_copy(&orchestra_parent_linkaddr, &linkaddr_null);
+
+  group_handler_init();
   /* Initialize all Orchestra rules */
   for(i = 0; i < NUM_RULES; i++) {
     if(all_rules[i]->init != NULL) {

@@ -1,6 +1,16 @@
 #include "orchestra.h"
 #include "orchestra-grouped-handler.h"
 
+
+/*Request slots amount for root 4 bits( 1 ~ 15 ) which actually mean 1~15 slots to allocate,reserved 0 for not sendeing to parent.*/
+uint8_t orchestra_request_slots_for_root=0;
+uint8_t orchestra_requested_slots_from_child=0;
+
+static uint16_t packet_countdown = 10;
+
+group_attribute groups[ORCHESTRA_SLOTFRAME_GROUP_AMOUNT];
+
+
 /*----------------------------------------------------------------------*/
 uint16_t
 get_group_offset(const linkaddr_t *addr)
@@ -26,7 +36,7 @@ void group_handler_init()
 }
 /*----------------------------------------------------------------------*/
 
-static void new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
+static void group_handler_new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
 {
     if (new != old)
     {
@@ -47,7 +57,7 @@ static void new_time_source(const struct tsch_neighbor *old, const struct tsch_n
     }
 }
 /*----------------------------------------------------------------------*/
-static int is_time_source(const linkaddr_t *linkaddr)
+static int group_handler_is_time_source(const linkaddr_t *linkaddr)
 {
     //PRINTF("parent null %d\n",linkaddr_cmp(&orchestra_parent_linkaddr, &linkaddr_null));
     //PRINTF("linkaddr null %d\n",linkaddr_cmp(linkaddr, &linkaddr_null));
@@ -55,19 +65,19 @@ static int is_time_source(const linkaddr_t *linkaddr)
     {
         if (linkaddr_cmp(&orchestra_parent_linkaddr, linkaddr))
         {
-            //PRINTF("is_time_source 1 \n");
+            //PRINTF("group_handler_is_time_source 1 \n");
             return 1;
         }
     }
-    //PRINTF("is_time_source 0 \n");
+    //PRINTF("group_handler_is_time_source 0 \n");
     return 0;
 }
 /*----------------------------------------------------------------------*/
-uint8_t get_request_slots_for_root(linkaddr_t *dest)
+uint8_t group_handler_get_request_slots_for_root(linkaddr_t *dest)
 {
     /* Select data packets we have a unicast link to */
-    //  PRINTF("get_request_slots_for_root %d ,%d\n", orchestra_request_slots_for_root,is_time_source(dest));
-    if (!linkaddr_cmp(dest, &linkaddr_null) && is_time_source(dest))
+    //  PRINTF("get_request_slots_for_root %d ,%d\n", orchestra_request_slots_for_root,group_handler_is_time_source(dest));
+    if (!linkaddr_cmp(dest, &linkaddr_null) && group_handler_is_time_source(dest))
     {
         PRINTF("get_request_slots_for_root is parent %d\n", orchestra_request_slots_for_root);
         return orchestra_request_slots_for_root;
@@ -76,14 +86,14 @@ uint8_t get_request_slots_for_root(linkaddr_t *dest)
 }
 
 /*----------------------------------------------------------------------*/
-void set_requested_slots_frome_child(uint8_t requested_slots_frome_child){
+void group_handler_set_requested_slots_frome_child(uint8_t requested_slots_frome_child){
 
     orchestra_requested_slots_from_child = requested_slots_frome_child;
 
 }
 
 /*----------------------------------------------------------------------*/
-static int is_slot_for_parent(const struct tsch_link *link){
+static int group_handler_is_slot_for_parent(const struct tsch_link *link){
     uint16_t parent_slot_offset_start;
     uint16_t parent_group_offset;
   
@@ -102,14 +112,14 @@ static int is_slot_for_parent(const struct tsch_link *link){
     return 0;
 }
 /*----------------------------------------------------------------------*/
-int is_packet_for_parent(struct queuebuf *buf){
+int group_handler_is_packet_for_parent(struct queuebuf *buf){
     
     const linkaddr_t *dest = queuebuf_addr(buf,PACKETBUF_ADDR_RECEIVER);
-    return is_time_source(dest);
+    return group_handler_is_time_source(dest);
 }
 /*----------------------------------------------------------------------*/
 
-void request_slot_routine(uint16_t used_slot){
+void group_handler_request_slot_routine(uint16_t used_slot){
     uint16_t parent_group_offset;
     parent_group_offset =get_group_offset(&orchestra_parent_linkaddr);
     if(used_slot>ADD_THRESHOLD)
@@ -125,7 +135,7 @@ void request_slot_routine(uint16_t used_slot){
     PRINTF("request_slot_routine %d , used %d\n",orchestra_request_slots_for_root,used_slot);
 }
 /*----------------------------------------------------------------------*/
-void slot_request_acked(){
+void group_handler_slot_request_acked(){
     if(orchestra_request_slots_for_root!=0){
         uint16_t parent_group_offset;
         parent_group_offset = get_group_offset(&orchestra_parent_linkaddr);
@@ -136,31 +146,35 @@ void slot_request_acked(){
       }
 }
 /*----------------------------------------------------------------------*/
-uint8_t get_request_slots_for_root(linkaddr_t *dest){
-    if(!linkaddr_cmp(dest, &linkaddr_null) && is_time_source(dest)) {
+uint8_t group_handler_get_request_slots_for_root(linkaddr_t *dest){
+    if(!linkaddr_cmp(dest, &linkaddr_null) && group_handler_is_time_source(dest)) {
         PRINTF("get_request_slots_for_root is parent %d\n", orchestra_request_slots_for_root);
       return orchestra_request_slots_for_root;
     }
     return 0;
 }
 /*----------------------------------------------------------------------*/
-void set_requested_slots_frome_child(uint8_t requested_slots_frome_child){
+void group_handler_set_requested_slots_frome_child(uint8_t requested_slots_frome_child){
     orchestra_requested_slots_from_child = requested_slots_frome_child;
 }
 /*----------------------------------------------------------------------*/
-uint16_t get_slot_required_slot(int group_offset){
+uint8_t group_handler_get_requested_slots_frome_child(){
+    return orchestra_requested_slots_from_child;
+}
+/*----------------------------------------------------------------------*/
+uint16_t group_handler_get_slot_required_slot(int group_offset){
     return groups[group_offset].required_slot;
 }
 
-uint16_t get_allocate_slot_offset(int group_offset){
+uint16_t group_handler_get_allocate_slot_offset(int group_offset){
     return groups[group_offset].allocate_slot_offset;
 }
 
-void set_slot_required_slot(int group_offset,uint16_t option){
+void group_handler_set_slot_required_slot(int group_offset,uint16_t option){
     groups[group_offset].required_slot = option;
 }
 
-void set_allocate_slot_offset(int group_offset,uint16_t option){
+void group_handler_set_allocate_slot_offset(int group_offset,uint16_t option){
     groups[group_offset].allocate_slot_offset = option;
 }
 /*----------------------------------------------------------------------*/
