@@ -42,7 +42,6 @@
 #include "net/mac/tsch/tsch-conf.h"
 #include "net/mac/tsch/tsch-schedule.h"
 #include "orchestra-conf.h"
-#include "orchestra-grouped-handler.h"
 
 /* The structure of an Orchestra rule */
 struct orchestra_rule {

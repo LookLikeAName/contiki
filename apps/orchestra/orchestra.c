@@ -38,6 +38,7 @@
 
 #include "contiki.h"
 #include "orchestra.h"
+#include "orchestra-grouped-handler.h"
 #include "net/packetbuf.h"
 #include "net/ipv6/uip-icmp6.h"
 #include "net/rpl/rpl-private.h"
