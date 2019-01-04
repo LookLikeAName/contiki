@@ -36,7 +36,7 @@ void group_handler_init()
 }
 /*----------------------------------------------------------------------*/
 
-static void group_handler_new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
+void group_handler_new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new)
 {
     if (new != old)
     {
@@ -57,7 +57,7 @@ static void group_handler_new_time_source(const struct tsch_neighbor *old, const
     }
 }
 /*----------------------------------------------------------------------*/
-static int group_handler_is_time_source(const linkaddr_t *linkaddr)
+int group_handler_is_time_source(const linkaddr_t *linkaddr)
 {
     //PRINTF("parent null %d\n",linkaddr_cmp(&orchestra_parent_linkaddr, &linkaddr_null));
     //PRINTF("linkaddr null %d\n",linkaddr_cmp(linkaddr, &linkaddr_null));
@@ -93,7 +93,7 @@ void group_handler_set_requested_slots_frome_child(uint8_t requested_slots_frome
 }
 
 /*----------------------------------------------------------------------*/
-static int group_handler_is_slot_for_parent(const struct tsch_link *link){
+int group_handler_is_slot_for_parent(const struct tsch_link *link){
     uint16_t parent_slot_offset_start;
     uint16_t parent_group_offset;
   

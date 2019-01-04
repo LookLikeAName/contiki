@@ -11,14 +11,14 @@ typedef struct group_attribute_s group_attribute;
 
 void group_handler_init();
 
-static void group_handler_new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new);
-static int group_handler_is_time_source(const linkaddr_t *linkaddr);
+void group_handler_new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new);
+int group_handler_is_time_source(const linkaddr_t *linkaddr);
 
 uint8_t group_handler_get_request_slots_for_root(linkaddr_t *dest);
 void group_handler_set_requested_slots_frome_child(uint8_t requested_slots_frome_child);
 uint8_t group_handler_get_requested_slots_frome_child();
 
-static int group_handler_is_slot_for_parent(const struct tsch_link *link);
+int group_handler_is_slot_for_parent(const struct tsch_link *link);
 int group_handler_is_packet_for_parent(struct queuebuf *buf);
 
 void group_handler_request_slot_routine(uint16_t used_slot);
