@@ -2,13 +2,6 @@
 #define __ORCHESTRA_GROUPED_HANDLER_H__
 
 
-struct group_attribute_s{
-  uint16_t required_slot;
-  uint16_t allocate_slot_offset;
-};
-
-typedef struct group_attribute_s group_attribute;
-
 void group_handler_init();
 
 void group_handler_new_time_source(const struct tsch_neighbor *old, const struct tsch_neighbor *new);
