@@ -8,6 +8,8 @@ uint8_t orchestra_requested_slots_from_child=0;
 
 static uint16_t packet_countdown = 10;
 
+group_attribute_s group_attribute_default = {1,0};
+
 group_attribute groups[ORCHESTRA_SLOTFRAME_GROUP_AMOUNT];
 
 

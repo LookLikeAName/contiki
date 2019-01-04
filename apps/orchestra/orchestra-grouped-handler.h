@@ -5,7 +5,7 @@
 struct group_attribute_s{
   uint16_t required_slot;
   uint16_t allocate_slot_offset;
-}group_attribute_default={1,0};
+}
 
 typedef struct group_attribute_s group_attribute;
 
