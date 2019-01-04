@@ -64,7 +64,7 @@ static uint16_t last_rx_count = 0 ;
 
 
 /*---------------------------------------------------------------------------*/
-uint16_t
+static uint16_t
 get_group_offset(const linkaddr_t *addr)
 {
   if(addr != NULL && ORCHESTRA_SLOTFRAME_GROUP_AMOUNT > 0) {

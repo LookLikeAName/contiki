@@ -18,7 +18,7 @@ group_attribute groups[ORCHESTRA_SLOTFRAME_GROUP_AMOUNT];
 
 
 /*----------------------------------------------------------------------*/
-uint16_t
+static uint16_t
 get_group_offset(const linkaddr_t *addr)
 {
   if(addr != NULL && ORCHESTRA_SLOTFRAME_GROUP_AMOUNT > 0) {
