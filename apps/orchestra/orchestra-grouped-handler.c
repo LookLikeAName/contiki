@@ -1,5 +1,6 @@
 #include "orchestra.h"
 #include "orchestra-grouped-handler.h"
+#include <stdio.h>
 
 #define DEBUG 0
 #if DEBUG
