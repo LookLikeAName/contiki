@@ -1,6 +1,13 @@
 #include "orchestra.h"
 #include "orchestra-grouped-handler.h"
 
+#define DEBUG 0
+#if DEBUG
+#define PRINTF(...) printf(__VA_ARGS__)
+#else
+#define PRINTF(...)
+#endif
+
 
 /*Request slots amount for root 4 bits( 1 ~ 15 ) which actually mean 1~15 slots to allocate,reserved 0 for not sendeing to parent.*/
 uint8_t orchestra_request_slots_for_root=0;
@@ -92,14 +99,14 @@ void group_handler_request_slot_routine(uint16_t used_slot){
     if(used_slot>ADD_THRESHOLD)
     {
       orchestra_request_slots_for_root = groups[parent_group_offset].required_slot+1 > ORCHESTRA_SLOTFRAME_GROUP_SIZE ? ORCHESTRA_SLOTFRAME_GROUP_SIZE : groups[parent_group_offset].required_slot+1;
-      PRINTF("ADD_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
+      //PRINTF("ADD_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
     }
     else if(used_slot<DELETE_THRESHOLD)
     {
       orchestra_request_slots_for_root = ((groups[parent_group_offset].required_slot-1) < 1) ? 1 : groups[parent_group_offset].required_slot-1;
-      PRINTF("DELETE_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
+      //PRINTF("DELETE_THRESHOLD %d , used %d\n",orchestra_request_slots_for_root,used_slot);
     }
-    PRINTF("request_slot_routine %d , used %d\n",orchestra_request_slots_for_root,used_slot);
+   // PRINTF("request_slot_routine %d , used %d\n",orchestra_request_slots_for_root,used_slot);
 }
 /*----------------------------------------------------------------------*/
 void group_handler_slot_request_acked(){
@@ -115,7 +122,7 @@ void group_handler_slot_request_acked(){
 /*----------------------------------------------------------------------*/
 uint8_t group_handler_get_request_slots_for_root(linkaddr_t *dest){
     if(!linkaddr_cmp(dest, &linkaddr_null) && group_handler_is_time_source(dest)) {
-        PRINTF("get_request_slots_for_root is parent %d\n", orchestra_request_slots_for_root);
+      //  PRINTF("get_request_slots_for_root is parent %d\n", orchestra_request_slots_for_root);
       return orchestra_request_slots_for_root;
     }
     return 0;
