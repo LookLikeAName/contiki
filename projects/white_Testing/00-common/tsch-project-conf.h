@@ -159,9 +159,17 @@
 #define TSCH_CALLBACK_RX_SLOT_USE_COUNT orchestra_callback_rx_use_count
 #endif
 
-#undef ORCHESTRA_CONF_RULES
-#define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe_0, &unicast_per_neighbor_rpl_ns_grouped_slotframe_1, &default_common } /* Orchestra in non-storing */
+/*Do we use multi channel for grouped orchestra*/
+#define ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF 0
+#define ORCHESTRA_GROUPED_MULTICHANNEL_NUMBER_CONF 2
 
+
+#undef ORCHESTRA_CONF_RULES
+#if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
+#define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe_0, &unicast_per_neighbor_rpl_ns_grouped_slotframe_1, &default_common } /* Orchestra in non-storing */
+#else
+#define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe_0, &default_common } /* Orchestra in non-storing */
+#endif
 /* Dimensioning */
 #define ORCHESTRA_CONF_EBSF_PERIOD                     47
 #define ORCHESTRA_CONF_COMMON_SHARED_PERIOD            31 /* Common shared slot, 7 is a very short slotframe (high energy, high capacity). Must be prime and at least equal to number of nodes (incl. BR) */
@@ -176,6 +184,9 @@
 #define SLOTS_WINDOW_SIZE 50
 #define ADD_THRESHOLD SLOTS_WINDOW_SIZE*0.5
 #define DELETE_THRESHOLD SLOTS_WINDOW_SIZE*0.1
+
+
+
 
 #endif /* WITH_ORCHESTRA */
 

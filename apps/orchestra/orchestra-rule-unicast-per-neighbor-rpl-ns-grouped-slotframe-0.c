@@ -141,7 +141,7 @@ delete_self_uc_link(uint8_t requested_slots)
 static int is_for_this_slotframe(const linkaddr_t *linkaddr){
 #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE
   int dest_slotframe_id = ((int)ORCHESTRA_LINKADDR_HASH(linkaddr)/ORCHESTRA_SLOTFRAME_GROUP_AMOUNT)%ORCHESTRA_GROUPED_MULTICHANNEL_NUMBER;
-  PRINTF("\n");
+  PRINTF("is_for_this_slotframe 0,%d ,%d \n",dest_slotframe_id,UNICAST_SLOTFRAME_ID);
   if(dest_slotframe_id == UNICAST_SLOTFRAME_ID){
     return 1;
   }
