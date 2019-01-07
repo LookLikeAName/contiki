@@ -37,6 +37,14 @@
 
 #include "contiki.h"
 #include "orchestra.h"
+#include <stdio.h>
+
+#define DEBUG 1
+#if DEBUG
+#define PRINTF(...) printf(__VA_ARGS__)
+#else
+#define PRINTF(...)
+#endif
 
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
@@ -60,6 +68,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   if(timeslot != NULL) {
     *timeslot = 0;
   }
+  PRINTF("common shared \n");
   return 1;
 }
 /*---------------------------------------------------------------------------*/
