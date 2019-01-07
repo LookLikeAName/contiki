@@ -45,7 +45,7 @@
 #include "net/packetbuf.h"
 #include <stdio.h>
 
-#define DEBUG 0
+#define DEBUG 1
 #if DEBUG
 #define PRINTF(...) printf(__VA_ARGS__)
 #else
@@ -181,7 +181,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   /* Select data packets we have a unicast link to */
   const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
   uint16_t dest_group_offset = get_group_offset(dest);
-
+  PRINTF ("select_packet 0 ,%d",is_for_this_slotframe(dest));
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null)
      && is_for_this_slotframe(dest)) {
