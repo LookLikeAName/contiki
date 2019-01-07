@@ -185,7 +185,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   if(packetbuf_attr(PACKETBUF_ATTR_FRAME_TYPE) == FRAME802154_DATAFRAME
      && !linkaddr_cmp(dest, &linkaddr_null)
      && is_for_this_slotframe(dest)) {
-      PRINTF("group slotframe \n");
+      PRINTF("group slotframe_0 \n");
     if(slotframe != NULL) {
       *slotframe = slotframe_handle;
     }
@@ -311,7 +311,7 @@ static void rx_use_count(const struct tsch_link *link,uint8_t packet_receved,int
    {
     last_rx_count ++;
    }
-   PRINTF("self_rx_maintain: %d , %d ,%d b\n",last_rx_count,packet_receved,frame_valid);
+   //PRINTF("self_rx_maintain: %d , %d ,%d b\n",last_rx_count,packet_receved,frame_valid);
   }
 }
 
@@ -320,7 +320,7 @@ static void rx_maintain_routine(){
   uint16_t node_group_offset;
 
   node_group_offset =get_group_offset(&linkaddr_node_addr);
-  PRINTF("rx_maintain_routine: %d \n",last_rx_count);
+ // PRINTF("rx_maintain_routine: %d \n",last_rx_count);
   if((group_handler_get_slot_required_slot(node_group_offset) -1)>0 && last_rx_count == 0 ){
     delete_self_uc_link(group_handler_get_slot_required_slot(node_group_offset) -1 );
   }
