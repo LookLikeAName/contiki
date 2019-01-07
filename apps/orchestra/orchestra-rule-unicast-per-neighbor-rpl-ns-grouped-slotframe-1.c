@@ -52,12 +52,12 @@
 #define PRINTF(...)
 #endif
 
-#define UNICAST_SLOTFRAME_ID 0
+#define UNICAST_SLOTFRAME_ID 1
 
 static uint16_t slotframe_handle = 0;
 static uint16_t channel_offset = 0;
 
-static struct tsch_slotframe *sf_unicast;
+static struct tsch_slotframe *sf_unicast_group_1;
 
 static uint16_t packet_countdown = 10;
 static uint16_t last_rx_count = 0 ;
@@ -103,7 +103,7 @@ add_self_uc_link(uint8_t requested_slots)
   /* Add/update link */
     for(i = 0; i < add_count; i++) {
       add_first_slot_offset++;
-     l = tsch_schedule_add_link(sf_unicast,
+     l = tsch_schedule_add_link(sf_unicast_group_1,
           LINK_OPTION_SHARED | LINK_OPTION_TX | LINK_OPTION_RX,
           LINK_TYPE_NORMAL, &tsch_broadcast_address,
           add_first_slot_offset, channel_offset);
@@ -128,7 +128,7 @@ delete_self_uc_link(uint8_t requested_slots)
   /* update link */
     for(i = 0; i < delete_count; i++) {
 
-      l =  tsch_schedule_add_link(sf_unicast,
+      l =  tsch_schedule_add_link(sf_unicast_group_1,
         LINK_OPTION_SHARED | LINK_OPTION_TX,
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         delete_slot_offset, channel_offset);
@@ -344,18 +344,18 @@ init(uint16_t sf_handle)
   channel_offset = sf_handle;
 
   /* Slotframe for unicast transmissions */
-  sf_unicast = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_GROUPED_UNICAST_PERIOD);
+  sf_unicast_group_1 = tsch_schedule_add_slotframe(slotframe_handle, ORCHESTRA_GROUPED_UNICAST_PERIOD);
   rx_timeslot = get_node_timeslot(&linkaddr_node_addr);
   /* Add a Tx link at each available timeslot. Make the link Rx at our own timeslot. */
   for(i = 0; i < ORCHESTRA_GROUPED_UNICAST_PERIOD; i++) {
-    tsch_schedule_add_link(sf_unicast,
+    tsch_schedule_add_link(sf_unicast_group_1,
         LINK_OPTION_SHARED | LINK_OPTION_TX | (((i >= rx_timeslot) && (i < rx_timeslot+1) && is_for_this_slotframe(&linkaddr_node_addr)) ? LINK_OPTION_RX : 0 ),
         LINK_TYPE_NORMAL, &tsch_broadcast_address,
         i, channel_offset);
   }
 }
 /*---------------------------------------------------------------------------*/
-struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe = {
+struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe_1 = {
   init,
   new_time_source,
   select_packet,

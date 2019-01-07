@@ -64,7 +64,8 @@ struct orchestra_rule {
 struct orchestra_rule eb_per_time_source;
 struct orchestra_rule unicast_per_neighbor_rpl_storing;
 struct orchestra_rule unicast_per_neighbor_rpl_ns;
-struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe;
+struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe_0;
+struct orchestra_rule unicast_per_neighbor_rpl_ns_grouped_slotframe_1;
 struct orchestra_rule default_common;
 
 extern linkaddr_t orchestra_parent_linkaddr;
