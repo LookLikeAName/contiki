@@ -138,7 +138,7 @@ delete_self_uc_link(uint8_t requested_slots)
     group_handler_set_slot_required_slot(node_group_offset,requested_slots);
 }
 /*---------------------------------------------------------------------------*/
-int is_for_this_slotframe(const linkaddr_t *linkaddr){
+static int is_for_this_slotframe(const linkaddr_t *linkaddr){
 #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE
   int dest_slotframe_id = ((int)ORCHESTRA_LINKADDR_HASH(linkaddr)/ORCHESTRA_SLOTFRAME_GROUP_AMOUNT)%ORCHESTRA_GROUPED_MULTICHANNEL_NUMBER;
   if(dest_slotframe_id == UNICAST_SLOTFRAME_ID){
@@ -244,7 +244,7 @@ packet_noack(uint16_t *slotframe,uint16_t *timeslot,struct queuebuf *buf)
 #endif
 /*---------------------------------------------------------------------------*/
 #if TSCH_CALLBACK_GROUPED_NESS_CONF
-void
+static void
 slot_allocate_routine()
 {
   uint16_t node_group_offset;
@@ -277,7 +277,7 @@ slot_allocate_routine()
 }
 
 /*----------------------------------------------------------------------*/
-int is_slot_for_parent(const struct tsch_link *link){
+static int is_slot_for_parent(const struct tsch_link *link){
   uint16_t parent_slot_offset_start;
   uint16_t parent_group_offset;
 
@@ -296,7 +296,7 @@ int is_slot_for_parent(const struct tsch_link *link){
   return 0;
 }
 
-void rx_use_count(const struct tsch_link *link,uint8_t packet_receved,int frame_valid){
+static void rx_use_count(const struct tsch_link *link,uint8_t packet_receved,int frame_valid){
   uint16_t node_slot_offset_start;
   uint16_t node_group_offset;
 
@@ -315,7 +315,7 @@ void rx_use_count(const struct tsch_link *link,uint8_t packet_receved,int frame_
   }
 }
 
-void rx_maintain_routine(){
+static void rx_maintain_routine(){
   
   uint16_t node_group_offset;
 
