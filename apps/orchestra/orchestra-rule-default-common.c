@@ -68,7 +68,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
   if(timeslot != NULL) {
     *timeslot = 0;
   }
-  PRINTF("common shared \n");
+  PRINTF("common shared ,%d,%d\n",slotframe_handle,channel_offset);
   return 1;
 }
 /*---------------------------------------------------------------------------*/
