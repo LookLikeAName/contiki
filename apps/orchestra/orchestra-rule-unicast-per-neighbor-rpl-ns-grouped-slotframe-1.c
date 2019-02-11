@@ -200,7 +200,7 @@ select_packet(uint16_t *slotframe, uint16_t *timeslot)
         *timeslot = get_node_timeslot(dest)-group_handler_get_allocate_slot_offset(dest_group_offset);
       }
     }
-    //PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x\n",*slotframe,*timeslot);
+    PRINTF("PACKETBUF_ATTR_TSCH_SLOTFRAME: %02x,PACKETBUF_ATTR_TSCH_TIMESLOT: %02x\n",*slotframe,*timeslot);
     
    
     return 1;

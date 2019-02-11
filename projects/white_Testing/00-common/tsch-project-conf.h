@@ -87,7 +87,7 @@
 /* TSCH logging. 0: disabled. 1: basic log. 2: with delayed
  * log messages from interrupt */
 #undef TSCH_LOG_CONF_LEVEL
-#define TSCH_LOG_CONF_LEVEL 0
+#define TSCH_LOG_CONF_LEVEL 1
 
 // #define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ 14, 18, 22, 26 }
 #define TSCH_CONF_DEFAULT_HOPPING_SEQUENCE (uint8_t[]){ 11,13,18,21 }
@@ -132,6 +132,7 @@
 
 
 #if WITH_ORCHESTRA
+#define TSCH_SCHEDULE_CONF_MAX_LINKS 50
 
 /* See apps/orchestra/README.md for more Orchestra configuration options */
 #define TSCH_SCHEDULE_CONF_WITH_6TISCH_MINIMAL 0 /* No 6TiSCH minimal schedule */
@@ -166,7 +167,7 @@
 
 #undef ORCHESTRA_CONF_RULES
 #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
-#define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe_0, &unicast_per_neighbor_rpl_ns_grouped_slotframe_1, &default_common } /* Orchestra in non-storing */
+#define ORCHESTRA_CONF_RULES { &eb_per_time_source, &default_common, &unicast_per_neighbor_rpl_ns_grouped_slotframe_0, &unicast_per_neighbor_rpl_ns_grouped_slotframe_1 } /* Orchestra in non-storing */
 #else
 #define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe_0, &default_common } /* Orchestra in non-storing */
 #endif

@@ -210,8 +210,8 @@ tsch_schedule_add_link(struct tsch_slotframe *slotframe,
         }
         linkaddr_copy(&l->addr, address);
 
-        PRINTF("TSCH-schedule: add_link %u %u %u %u %u %u\n",
-               slotframe->handle, link_options, link_type, timeslot, channel_offset, TSCH_LOG_ID_FROM_LINKADDR(address));
+       // PRINTF("TSCH-schedule: add_link %u %u %u %u %u %u\n",
+               //slotframe->handle, link_options, link_type, timeslot, channel_offset, TSCH_LOG_ID_FROM_LINKADDR(address));
 
         /* Release the lock before we update the neighbor (will take the lock) */
         tsch_release_lock();
@@ -350,8 +350,20 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
               new_best = l;
             }
           }
-
+	#if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
           /* Maintain backup_link */
+          if(curr_backup == NULL) {
+            /* Check if 'l' best can be used as backup */
+            if(new_best != l && (l->link_options & (LINK_OPTION_RX|LINK_OPTION_TX))) { /* Does 'l' have Rx flag? */
+              curr_backup = l;
+            }
+            /* Check if curr_best can be used as backup */
+            if(new_best != curr_best && (curr_best->link_options & LINK_OPTION_RX)) { /* Does curr_best have Rx flag? */
+              curr_backup = curr_best;
+            }
+          }
+	#else
+	  /* Maintain backup_link */
           if(curr_backup == NULL) {
             /* Check if 'l' best can be used as backup */
             if(new_best != l && (l->link_options & LINK_OPTION_RX)) { /* Does 'l' have Rx flag? */
@@ -362,7 +374,7 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
               curr_backup = curr_best;
             }
           }
-
+	#endif
           /* Maintain curr_best */
           if(new_best != NULL) {
             curr_best = new_best;
@@ -376,10 +388,13 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
     if(time_offset != NULL) {
       *time_offset = time_to_curr_best;
     }
+  //PRINTF("link check, current: %d %d,backup: %d %d \n",curr_best!=NULL?curr_best->slotframe_handle:-1,curr_best!=NULL?curr_best->timeslot:-1,
+	//curr_backup!=NULL?curr_backup->slotframe_handle:-1,curr_backup!=NULL?curr_backup->timeslot:-1);
   }
   if(backup_link != NULL) {
     *backup_link = curr_backup;
   }
+ 
   return curr_best;
 }
 /*---------------------------------------------------------------------------*/
