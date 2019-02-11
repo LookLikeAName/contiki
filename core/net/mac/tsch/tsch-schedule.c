@@ -355,14 +355,14 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
           }
 	#if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
           /* Maintain backup_link */
-          if(backup_link_count>TSCH_BACKUP_LINK_AMOUNT && curr_backup[backup_link_count] == NULL) {
+          if(backup_link_count < TSCH_BACKUP_LINK_AMOUNT && curr_backup[backup_link_count] == NULL) {
             /* Check if 'l' best can be used as backup */
             if(new_best != l && (l->link_options & (LINK_OPTION_RX|LINK_OPTION_TX))) { /* Does 'l' have Rx flag? */
-              curr_backup[backup_link_count] = l;
+              curr_backup[backup_link_count] = *l;
             }
             /* Check if curr_best can be used as backup */
             if(new_best != curr_best && (curr_best->link_options & LINK_OPTION_RX)) { /* Does curr_best have Rx flag? */
-              curr_backup[backup_link_count] = curr_best;
+              curr_backup[backup_link_count] = *curr_best;
             }
             backup_link_count++;
           }
