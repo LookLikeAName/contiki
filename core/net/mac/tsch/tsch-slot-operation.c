@@ -1099,7 +1099,11 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         }
 
         /* Get next active link */
+        #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
+        current_link = tsch_schedule_get_next_active_link(&tsch_current_asn, &timeslot_diff, backup_link);
+        #else
         current_link = tsch_schedule_get_next_active_link(&tsch_current_asn, &timeslot_diff, &backup_link);
+        #endif
         if(current_link == NULL) {
           /* There is no next link. Fall back to default
            * behavior: wake up at the next slot. */
@@ -1137,7 +1141,11 @@ tsch_slot_operation_start(void)
   do {
     uint16_t timeslot_diff;
     /* Get next active link */
+    #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
+    current_link = tsch_schedule_get_next_active_link(&tsch_current_asn, &timeslot_diff, backup_link);
+    #else
     current_link = tsch_schedule_get_next_active_link(&tsch_current_asn, &timeslot_diff, &backup_link);
+    #endif
     if(current_link == NULL) {
       /* There is no next link. Fall back to default
        * behavior: wake up at the next slot. */
