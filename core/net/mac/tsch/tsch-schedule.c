@@ -314,6 +314,9 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
     struct tsch_link **backup_link)
 {
   uint16_t time_to_curr_best = 0;
+  #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
+  uint8_t backup_link_count = 0;
+  #endif
   struct tsch_link *curr_best = NULL;
   struct tsch_link *curr_backup = NULL; /* Keep a back link in case the current link
   turns out useless when the time comes. For instance, for a Tx-only link, if there is
@@ -352,15 +355,16 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
           }
 	#if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
           /* Maintain backup_link */
-          if(curr_backup == NULL) {
+          if(backup_link_count>TSCH_BACKUP_LINK_AMOUNT && curr_backup[backup_link_count] == NULL) {
             /* Check if 'l' best can be used as backup */
             if(new_best != l && (l->link_options & (LINK_OPTION_RX|LINK_OPTION_TX))) { /* Does 'l' have Rx flag? */
-              curr_backup = l;
+              curr_backup[backup_link_count] = l;
             }
             /* Check if curr_best can be used as backup */
             if(new_best != curr_best && (curr_best->link_options & LINK_OPTION_RX)) { /* Does curr_best have Rx flag? */
-              curr_backup = curr_best;
+              curr_backup[backup_link_count] = curr_best;
             }
+            backup_link_count++;
           }
 	#else
 	  /* Maintain backup_link */

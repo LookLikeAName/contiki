@@ -170,7 +170,12 @@ struct tsch_link *current_link = NULL;
 /* A backup link with Rx flag, overlapping with current_link.
  * If the current link is Tx-only and the Tx queue
  * is empty while executing the link, fallback to the backup link. */
+ #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
+ static struct tsch_link *backup_link[TSCH_BACKUP_LINK_AMOUNT];
+ #else
 static struct tsch_link *backup_link = NULL;
+#endif
+
 static struct tsch_packet *current_packet = NULL;
 static struct tsch_neighbor *current_neighbor = NULL;
 
@@ -1015,10 +1020,28 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
       current_packet = get_packet_and_neighbor_for_link(current_link, &current_neighbor);
       /* There is no packet to send, and this link does not have Rx flag. Instead of doing
        * nothing, switch to the backup link (has Rx flag) if any. */
+       #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
+       if(current_packet == NULL && !(current_link->link_options & LINK_OPTION_RX)) {
+        int i=0;
+        for(i=0;i<TSCH_BACKUP_LINK_AMOUNT;i++){
+          if(backup_link[i]==NULL){
+            break;
+          }
+          current_link = backup_link[i];
+          current_packet = get_packet_and_neighbor_for_link(current_link, &current_neighbor);
+          if(current_packet != NULL)
+          {
+            break;
+          }
+        }
+        
+        } 
+       #else
       if(current_packet == NULL && !(current_link->link_options & LINK_OPTION_RX) && backup_link != NULL) {
         current_link = backup_link;
         current_packet = get_packet_and_neighbor_for_link(current_link, &current_neighbor);
       }
+      #endif
       is_active_slot = current_packet != NULL || (current_link->link_options & LINK_OPTION_RX);
       if(is_active_slot) {
         /* Hop channel */

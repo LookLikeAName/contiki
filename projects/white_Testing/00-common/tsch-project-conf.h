@@ -139,6 +139,7 @@
 #define TSCH_CONF_WITH_LINK_SELECTOR 1 /* Orchestra requires per-packet link selection */
 #define TSCH_CALLBACK_NOACK_CONF 1
 #define TSCH_CALLBACK_GROUPED_NESS_CONF 1
+#define TSCH_BACKUP_LINK_AMOUNT 4
 /* Orchestra callbacks */
 #define TSCH_CALLBACK_NEW_TIME_SOURCE orchestra_callback_new_time_source
 #define TSCH_CALLBACK_PACKET_READY orchestra_callback_packet_ready
