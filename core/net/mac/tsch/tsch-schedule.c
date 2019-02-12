@@ -318,6 +318,7 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
   struct tsch_link *curr_best = NULL;
   #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
   uint8_t backup_link_count = 0;
+  uint8_t backup_link_set_flag = 0;
   struct tsch_link *curr_backup[TSCH_BACKUP_LINK_AMOUNT];
   #else
   struct tsch_link *curr_backup = NULL; /* Keep a back link in case the current link
@@ -369,12 +370,19 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
             /* Check if 'l' best can be used as backup */
             if(new_best != l && (l->link_options & (LINK_OPTION_RX|LINK_OPTION_TX))) { /* Does 'l' have Rx flag? */
               curr_backup[backup_link_count] = l;
+              backup_link_set_flag = 1;
             }
             /* Check if curr_best can be used as backup */
             if(new_best != curr_best && (curr_best->link_options & LINK_OPTION_RX)) { /* Does curr_best have Rx flag? */
               curr_backup[backup_link_count] = curr_best;
+              backup_link_set_flag = 1;
             }
-            backup_link_count++;
+            if(backup_link_set_flag == 1){
+              backup_link_count++;
+              backup_link_set_flag = 0;
+            }
+            PRINTF("TSCH-add backup link: %d %d ",curr_backup[backup_link_count] -> slotframe_handle,backup_link_count);
+            
           }
 	#else
 	  /* Maintain backup_link */
