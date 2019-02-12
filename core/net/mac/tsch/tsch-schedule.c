@@ -340,7 +340,14 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
         if(curr_best == NULL || time_to_timeslot < time_to_curr_best) {
           time_to_curr_best = time_to_timeslot;
           curr_best = l;
+          #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
+          int i=0;
+          for(i=0;i<TSCH_BACKUP_LINK_AMOUNT;i++){
+            curr_backup[i]=NULL;
+          }
+          #else
           curr_backup = NULL;
+          #endif
         } else if(time_to_timeslot == time_to_curr_best) {
           struct tsch_link *new_best = NULL;
           /* Two links are overlapping, we need to select one of them.
