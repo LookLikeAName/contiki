@@ -1026,15 +1026,15 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
         for(i=0;i<TSCH_BACKUP_LINK_AMOUNT;i++){
           
           if(backup_link[i]==NULL){
-            printf("TSCH no backup link\n");
+          //  printf("TSCH no backup link\n");
             break;
           }
-          printf("TSCH get backup link: %d %d\n",i, backup_link[i]->slotframe_handle);
+          //printf("TSCH get backup link: %d %d\n",i, backup_link[i]->slotframe_handle);
           current_link = backup_link[i];
           current_packet = get_packet_and_neighbor_for_link(current_link, &current_neighbor);
           if(current_packet != NULL)
           {
-            printf("TSCH got packet for link\n");
+           // printf("TSCH got packet for link\n");
             break;
           }
         }

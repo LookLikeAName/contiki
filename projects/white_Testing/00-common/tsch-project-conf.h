@@ -168,7 +168,7 @@
 
 #undef ORCHESTRA_CONF_RULES
 #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
-#define ORCHESTRA_CONF_RULES { &eb_per_time_source, &default_common, &unicast_per_neighbor_rpl_ns_grouped_slotframe_0, &unicast_per_neighbor_rpl_ns_grouped_slotframe_1 } /* Orchestra in non-storing */
+#define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe_0, &unicast_per_neighbor_rpl_ns_grouped_slotframe_1, &default_common } /* Orchestra in non-storing */
 #else
 #define ORCHESTRA_CONF_RULES { &eb_per_time_source, &unicast_per_neighbor_rpl_ns_grouped_slotframe_0, &default_common } /* Orchestra in non-storing */
 #endif
