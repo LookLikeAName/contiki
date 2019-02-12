@@ -171,7 +171,7 @@ struct tsch_link *current_link = NULL;
  * If the current link is Tx-only and the Tx queue
  * is empty while executing the link, fallback to the backup link. */
  #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
- static struct tsch_link (*backup_link)[TSCH_BACKUP_LINK_AMOUNT];
+ static struct tsch_link *backup_link = NULL;
  #else
 static struct tsch_link *backup_link = NULL;
 #endif
@@ -1140,12 +1140,7 @@ tsch_slot_operation_start(void)
   TSCH_DEBUG_INIT();
   do {
     uint16_t timeslot_diff;
-    #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
-    int i=0;
-    for(i=0;i<TSCH_BACKUP_LINK_AMOUNT;i++){
-      backup_link[i]=NULL;
-    }
-    #endif
+
     /* Get next active link */
     current_link = tsch_schedule_get_next_active_link(&tsch_current_asn, &timeslot_diff, &backup_link);
     if(current_link == NULL) {
