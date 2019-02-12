@@ -371,20 +371,18 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
             if(new_best != l && (l->link_options & (LINK_OPTION_RX|LINK_OPTION_TX))) { /* Does 'l' have Rx flag? */
               PRINTF("TSCH-add backup link l\n");
               curr_backup[backup_link_count] = l;
-              backup_link_count++;
               backup_link_set_flag = 1;
             }
             /* Check if curr_best can be used as backup */
             if(new_best != curr_best && (curr_best->link_options & LINK_OPTION_RX)) { /* Does curr_best have Rx flag? */
               PRINTF("TSCH-add backup link curr_best\n");
               curr_backup[backup_link_count] = curr_best;
-              backup_link_count++;
               backup_link_set_flag = 1;
             }
             PRINTF("TSCH-add backup link count : %d\n",backup_link_count);
             if(backup_link_set_flag == 1){
               PRINTF("TSCH-add backup link handle: %d\n",curr_backup[backup_link_count] -> slotframe_handle);
-              //backup_link_count++;
+              backup_link_count++;
               backup_link_set_flag = 0;
             }
           }
