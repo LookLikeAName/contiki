@@ -1140,6 +1140,12 @@ tsch_slot_operation_start(void)
   TSCH_DEBUG_INIT();
   do {
     uint16_t timeslot_diff;
+    #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
+    int i=0;
+    for(i=0;i<TSCH_BACKUP_LINK_AMOUNT;i++){
+      backup_link[i]=NULL;
+    }
+    #endif
     /* Get next active link */
     current_link = tsch_schedule_get_next_active_link(&tsch_current_asn, &timeslot_diff, &backup_link);
     if(current_link == NULL) {

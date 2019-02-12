@@ -378,12 +378,12 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
               backup_link_set_flag = 1;
             }
             if(backup_link_set_flag == 1){
-              PRINTF("TSCH-add backup link handle: %d",curr_backup[backup_link_count] -> slotframe_handle);
+              PRINTF("TSCH-add backup link handle: %d\n",curr_backup[backup_link_count] -> slotframe_handle);
               backup_link_count++;
               backup_link_set_flag = 0;
             }
-            PRINTF("TSCH-add backup link count : %d",backup_link_count);
-            
+            PRINTF("TSCH-add backup link count : %d\n",backup_link_count);
+
            
             
           }
