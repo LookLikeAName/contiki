@@ -171,7 +171,7 @@ struct tsch_link *current_link = NULL;
  * If the current link is Tx-only and the Tx queue
  * is empty while executing the link, fallback to the backup link. */
  #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
- static struct tsch_link *backup_link[TSCH_BACKUP_LINK_AMOUNT];
+ static struct tsch_link (*backup_link)[TSCH_BACKUP_LINK_AMOUNT];
  #else
 static struct tsch_link *backup_link = NULL;
 #endif
