@@ -415,10 +415,16 @@ tsch_schedule_get_next_active_link(struct tsch_asn_t *asn, uint16_t *time_offset
   //PRINTF("link check, current: %d %d,backup: %d %d \n",curr_best!=NULL?curr_best->slotframe_handle:-1,curr_best!=NULL?curr_best->timeslot:-1,
 	//curr_backup!=NULL?curr_backup->slotframe_handle:-1,curr_backup!=NULL?curr_backup->timeslot:-1);
   }
+  #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
+  int i=0;
+  for(i=0;i<TSCH_BACKUP_LINK_AMOUNT;i++){
+      backup_link[i]=curr_backup[i];
+  }
+  #else
   if(backup_link != NULL) {
     *backup_link = curr_backup;
   }
- 
+ #endif
   return curr_best;
 }
 /*---------------------------------------------------------------------------*/

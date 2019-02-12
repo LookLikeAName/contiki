@@ -171,7 +171,7 @@ struct tsch_link *current_link = NULL;
  * If the current link is Tx-only and the Tx queue
  * is empty while executing the link, fallback to the backup link. */
  #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
- static struct tsch_link *backup_link = NULL;
+ static struct tsch_link *backup_link[TSCH_BACKUP_LINK_AMOUNT];
  #else
 static struct tsch_link *backup_link = NULL;
 #endif
@@ -1029,7 +1029,7 @@ PT_THREAD(tsch_slot_operation(struct rtimer *t, void *ptr))
             printf("TSCH no backup link\n");
             break;
           }
-          printf("TSCH get backup link: %d %d\n",i, backup_link[i]->slotframe_handle);
+          printf("TSCH get backup link: %d %d %d\n",i, backup_link[i]->slotframe_handle,sizeof(backup_link)/sizeof(tsch_link));
           current_link = backup_link[i];
           current_packet = get_packet_and_neighbor_for_link(current_link, &current_neighbor);
           if(current_packet != NULL)
@@ -1140,7 +1140,12 @@ tsch_slot_operation_start(void)
   TSCH_DEBUG_INIT();
   do {
     uint16_t timeslot_diff;
-
+    #if ORCHESTRA_GROUPED_MULTICHANNEL_ENABLE_CONF
+    int i=0;
+    for(i=0;i<TSCH_BACKUP_LINK_AMOUNT;i++){
+      backup_link[i]=NULL;
+    }
+    #endif
     /* Get next active link */
     current_link = tsch_schedule_get_next_active_link(&tsch_current_asn, &timeslot_diff, &backup_link);
     if(current_link == NULL) {
